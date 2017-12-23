@@ -25,11 +25,7 @@ async function openBuilder() {
     }
 
     const filename = vscode.window.activeTextEditor.document.fileName;
-    const uri = vscode.Uri.parse(
-        ReelDocumentContentProvider.scheme +
-        '://' +
-        encodeURIComponent(filename)
-    );
+    const uri = vscode.Uri.parse(`${ReelDocumentContentProvider.scheme}://${encodeURIComponent(filename)}`);
 
     try {
         await vscode.commands.executeCommand('vscode.previewHtml', uri);
