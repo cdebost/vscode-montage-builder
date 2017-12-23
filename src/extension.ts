@@ -1,29 +1,43 @@
 'use strict';
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+
 import * as vscode from 'vscode';
+import * as Url from 'url';
+import { ReelDocumentContentProvider } from './reel-document-content-provider';
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+    const provider = new ReelDocumentContentProvider(context);
+    const providerRegistrations = vscode.workspace.registerTextDocumentContentProvider(ReelDocumentContentProvider.scheme, provider);
 
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
-    console.log('Congratulations, your extension "package-configurator" is now active!');
+    const commandRegistration = vscode.commands.registerCommand('extension.reel', async () => {
+        if (!checkValidEditor()) {
+            return;
+        }
 
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with  registerCommand
-    // The commandId parameter must match the command field in package.json
-    let disposable = vscode.commands.registerCommand('extension.sayHello', () => {
-        // The code you place here will be executed every time your command is executed
+        const filename = vscode.window.activeTextEditor.document.fileName;
+        const uri = vscode.Uri.parse(
+            ReelDocumentContentProvider.scheme +
+            '://' +
+            encodeURIComponent(filename)
+        );
 
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Hello World!');
+        try {
+            await vscode.commands.executeCommand('vscode.previewHtml', uri);
+        } catch (err) {
+            vscode.window.showErrorMessage(err);
+        }
     });
 
-    context.subscriptions.push(disposable);
+    context.subscriptions.push(provider, providerRegistrations, commandRegistration);
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {
+}
+
+function checkValidEditor(): boolean {
+    if (!vscode.window.activeTextEditor) {
+        vscode.window.showErrorMessage("No document selected.");
+        return false;
+    }
+    return true;
 }

@@ -11,14 +11,31 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.sayHello"
+        "onCommand:extension.reel"
     ],
     "main": "./out/extension",
     "contributes": {
         "commands": [
             {
-                "command": "extension.sayHello",
-                "title": "Hello World"
+                "command": "extension.reel",
+                "title": "Reel"
+            }
+        ],
+        "views": {
+            "explorer": [
+                {
+                    "id": "configurator",
+                    "name": "Component Configurator",
+                    "when": "reelFileActive" 
+                }
+            ]
+        },
+        "languages": [
+            {
+                "id": "reel",
+                "extensions": [
+                    ".reel"
+                ]
             }
         ]
     },
