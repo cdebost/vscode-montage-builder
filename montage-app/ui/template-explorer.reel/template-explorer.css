@@ -1,0 +1,365 @@
+.TemplateExplorer {
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    -moz-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+}
+
+.TemplateExplorer.ComponentEditor-column {
+    border-left: none;
+    min-width: 300px;
+}
+
+.TemplateExplorer.Filament--willAcceptDrop {
+    outline: none;
+}
+
+.TemplateExplorer.Filament--willAcceptDrop .TemplateExplorer-list {
+    outline: 1px solid hsl(210, 100%, 84%);
+}
+
+
+/* Header ---------------------------- */
+
+.TemplateExplorer-header {
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: flex;
+    -webkit-justify-content: space-between;
+    -moz-justify-content: space-between;
+    -ms-justify-content: space-between;
+    justify-content: space-between;
+    -webkit-align-items: center;
+    -moz-align-items: center;
+    -ms-align-items: center;
+    align-items: center;
+}
+
+.TemplateExplorer-header .matte-InputText {
+    margin-right: 12px;
+}
+
+.TemplateExplorer-hiddenControl {
+    display: inline-block;
+    margin: 0;
+    vertical-align: middle;
+    font-size: 11px;
+    color: hsl(0,0%,50%);
+    white-space: nowrap;
+}
+
+.TemplateExplorer-hiddenControl.is-disabled {
+    pointer-events: none;
+    opacity: .3;
+}
+
+.TemplateExplorer-header-counter {
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: middle;
+    font-weight: bold;
+    line-height: 0;
+}
+
+.TemplateExplorer-filterToggle.matte-Button {
+    margin: 0;
+    vertical-align: middle;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    opacity: 0.5;
+}
+
+.TemplateExplorer-hiddenControl.is-disabled .TemplateExplorer-filterToggle,
+.TemplateExplorer-filterToggle.matte-Button.pressed {
+    opacity: 1;
+}
+
+.TemplateExplorer-filterToggle--binding.matte-Button,
+.TemplateExplorer-filterToggle--binding.matte-Button.pressed {
+    background: url(/assets/icons/binding.png) no-repeat center;
+    background-size: auto 14px;
+}
+
+.TemplateExplorer-filterToggle--listener.matte-Button,
+.TemplateExplorer-filterToggle--listener.matte-Button.pressed {
+    background: url(/assets/icons/event.png) no-repeat center;
+    background-size: auto 14px;
+}
+
+.TemplateExplorer-filterToggle.matte-Button:hover {
+    background-color: hsl(0,0%,100%);
+}
+
+.TemplateExplorer-filterToggle.matte-Button:active,
+.TemplateExplorer-filterToggle.matte-Button.pressed:active {
+    background-color: hsl(0,0%,90%);
+}
+
+
+/* HiddenCheckbox */
+
+.TemplateObjectCell-hiddenToggleButton.matte-Button {
+    width: 2.5em;
+    height: 2.5em;
+    margin: 0;
+    border: none;
+    background: url(/assets/icons/eye-off.png) no-repeat center;
+    background-size: 14px;
+    opacity: 0.5;
+}
+
+.TemplateObjectCell-hiddenToggleButton.matte-Button:hover {
+    background-color: transparent;
+    opacity: 0.7;
+}
+
+.TemplateObjectCell-hiddenToggleButton.matte-Button:active {
+    opacity: .3;
+}
+
+.TemplateObjectCell-hiddenToggleButton.matte-Button.pressed {
+    background: url(/assets/icons/eye.png) no-repeat center;
+    background-size: 14px;
+}
+
+
+/* List ---------------------------- */
+
+.TemplateExplorer-list {
+    -webkit-flex: 1;
+    -moz-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    min-height: 0;
+    overflow: scroll;
+    margin: 0;
+    padding-top: 4px;
+    padding-bottom: 150px;
+    border-bottom: 1px solid hsl(0, 0%, 80%);
+    background-color: hsl(0, 0%, 86%);
+    list-style: none;
+}
+
+.TemplateExplorer-objectList {
+    min-height: 0;
+    overflow: scroll;
+    margin: 0;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid hsl(0, 0%, 80%);
+    background-color: hsl(0, 0%, 86%);
+    list-style: none;
+}
+
+.TemplateExplorer-list-item {
+    border: 1px solid hsl(0, 0%, 80%);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 4px 0;
+    background-color: hsl(0,0%,96%)
+}
+
+.TemplateObjectCell--isInProjectPackage .TemplateExplorer-list-item {
+    border-radius: 0;
+}
+
+
+
+/* TemplateObject Cell ---------------------------- */
+
+.TemplateObjectCell-Wrapper {
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: flex;
+    align-items: center;
+    justify-content:center;
+}
+
+.TemplateObjectCell-Wrapper .toggle {
+    -wekit-flex-direction: column;
+    width: 22px;
+    height: 100%;
+}
+
+.TemplateObjectCell {
+    background-color: hsl(0, 0%, 96%);
+    -webkit-flex-direction: column;
+    -moz-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    width: 100%;
+}
+
+.TemplateObjectCell--excluded {
+    opacity: 0.5;
+}
+
+.TemplateObjectCell--excluded  .TemplateObjectCell-section {
+    display: none;
+}
+
+.TemplateObjectCell--notCollapsible {
+    margin-left: 20px;
+}
+
+.TemplateObjectCell--selected .TemplateObjectCell {
+    border-color: hsl(210,100%,60%);
+    background-color: hsl(0,0%,98%);
+}
+
+.TemplateObjectCell--highlighted .TemplateObjectCell {
+    border-color: hsl(210,100%,60%);
+}
+
+/* TemplateObjectCell Sections */
+
+.TemplateObjectCell-section {
+    border-top: 1px solid hsla(0, 0%, 90%, 1);
+}
+
+
+/* TemplateObjectCell components
+ * (used in binding + listener explorer) */
+
+.TemplateObjectCell-header {
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: flex;
+}
+
+.TemplateObjectCell-objectLabel--isClassName {
+    color: #a5c261;
+}
+
+.TemplateObjectCell-objectLabel--isMontageId {
+    color: #49a6d2;
+}
+
+.TemplateObjectCell-objectLabel--isComponentLabel {
+    color: #ffbc6d;
+}
+
+.TemplateObjectCell-icon {
+    width: 32px;
+    height: 32px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: auto 14px;
+}
+
+.TemplateObjectCell-icon--binding {
+    background-image: url(/assets/icons/binding.png);
+}
+
+.TemplateObjectCell-icon--listener {
+    background-image: url(/assets/icons/event.png);
+}
+
+.TemplateObjectCell-title {
+    -webkit-flex: 1;
+    -moz-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    margin: 0;
+    font-size: inherit;
+    font-weight: normal;
+    line-height: 32px;
+    color: hsl(0, 0%, 30%);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* Hidden Checkbox ---------------------------- */
+
+.TemplateObjectCell-hiddenCheckbox.matte-InputCheckbox {
+    width: 2.5em;
+    height: 2.5em;
+    margin: 0;
+    border: none;
+    background: url(/assets/icons/eye.png) no-repeat center;
+    background-size: 14px;
+    opacity: .3;
+}
+
+.TemplateObjectCell-hiddenCheckbox.matte-InputCheckbox:hover {
+    background-color: transparent;
+    opacity: .5;
+}
+
+.TemplateObjectCell-hiddenCheckbox.matte-InputCheckbox.active {
+    opacity: .3;
+}
+
+.TemplateObjectCell-hiddenCheckbox.matte-InputCheckbox:checked {
+    background: url(/assets/icons/eye-off.png) no-repeat center;
+    background-size: 14px;
+}
+
+
+/* TemplateObjectCell Buttons ---------------------------- */
+
+.TemplateObjectCell-button.matte-Button {
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 32px;
+    text-align: center;
+    color: hsl(0, 0%, 60%);
+    border-radius: 0;
+    border: none;
+    background-color: transparent;
+    -webkit-font-smoothing: none;
+    -moz-font-smoothing: none;
+    -ms-font-smoothing: none;
+    font-smoothing: none;
+}
+
+.TemplateObjectCell-button.matte-Button:hover {
+    background-color: hsl(0,0%,92%);
+}
+
+.TemplateObjectCell-button.matte-Button:active {
+    background-color: hsla(0, 0%, 82%, 1);
+}
+
+.TemplateObjectCell-button--pill.matte-Button {
+    height: 22px;
+    line-height: 22px;
+}
+
+
+
+/* List ---------------------------- */
+
+.TemplateObjectCell-list {
+    margin: 0;
+    padding: 0 0 4px 32px;
+}
+
+.TemplateObjectCell-list:empty {
+    padding-bottom: 0;
+}
+
+/* Toggle ---------------------------- */
+
+.TemplateObjectCell-Wrapper .Toggle.matte-InputCheckbox {
+    margin: 0 0 0 4px;
+}
+.TemplateObjectCell-Wrapper .Toggle.matte-InputCheckbox:checked {
+    margin: 0 0 0 4px; /* needed */
+}

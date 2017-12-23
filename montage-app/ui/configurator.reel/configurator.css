@@ -1,0 +1,172 @@
+.Configurator.Panel {
+    background: hsl(0, 0%, 92%);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 320px;
+}
+
+.Configurator-inspectorCondition {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: column;
+    flex-flow: column;
+    -webkit-flex: 1;
+    flex: 1;
+}
+
+.Configurator-tabs {
+    display: flex;
+    width: 100%;
+}
+
+.Configurator-tab.matte-RadioButton {
+    flex: 1;
+    height: 33px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    color: hsl(0, 0%, 46%);
+    background-color: hsl(0, 0%, 70%);
+    font-size: 15px;
+    line-height: 1;
+    border: none;
+    border-bottom: 1px solid hsl(0, 0%, 64%);
+    border-radius: 0;
+    border-top: none;
+    cursor: pointer;
+}
+
+.Configurator-tab.matte-RadioButton + .Configurator-tab {
+    border-left: 1px solid hsl(0, 0%, 64%);
+}
+
+.Configurator-tab.matte-RadioButton:hover {
+    color: hsl(0, 0%, 42%);
+    background-color: hsl(0, 0%, 74%);
+}
+
+.Configurator-tab.matte-RadioButton.montage-RadioButton--checked {
+    color: hsl(0, 0%, 30%);
+    background: hsl(0, 0%, 92%);
+    cursor: default;
+    border-bottom: none;
+}
+
+.Configurator-content {
+    overflow-y: auto;
+}
+
+
+/* Inspector -------------------------------- */
+
+.Inspector {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: column;
+    flex-flow: column;
+    position: relative;
+    -webkit-flex: 1;
+    flex: 1;
+}
+
+
+/* Header -------------------------------- */
+
+.Inspector-header {
+    display: -webkit-flex;
+    display: flex;
+}
+
+.Inspector-header-title {
+    -webkit-flex: 1;
+    flex: 1;
+    font-weight: bold;
+    font-family: inherit;
+    color: hsl(0,0%,30%);
+    background: hsl(0,0%,95%);
+    border: 1px solid transparent;
+}
+
+.Inspector-header-title:hover, .Inspector-header-title:focus{
+    background: white;
+    border: 1px solid #B3B3B3;
+}
+
+.Inspector-header-title.matte-InputText {
+    border-color: hsl(0,0%,85%);
+    width: auto;
+}
+
+.Inspector-header-button[data-icon]:before {
+    font-size: 40px;
+    line-height: .7;
+    color: hsl(0, 0%, 60%);
+}
+
+.Inspector-header-button {
+    position: relative;
+}
+
+
+
+/* BlueprintEditor -------------------------------- */
+
+.BlueprintEditor {
+    -webkit-flex: 1;
+    flex: 1;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+/* Scrollbar -------------------------------- */
+
+.BlueprintEditor::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 3px;
+    height: 0px;
+    background-color: hsl(0, 0%, 70%);
+}
+
+.BlueprintEditor::-webkit-scrollbar-thumb {
+    border: none;
+    background-color: hsl(0, 0%, 90%);
+}
+
+/* Group Toggle ------------------------- */
+
+.PropertyGroup-toggle {
+    position: relative;
+	padding: 4px 8px;
+	margin: 0;
+    font-size: 13px;
+	font-weight: bold;
+    color: hsl(0, 0%, 50%);
+    text-shadow: 0 1px 0 hsla(0,0%,100%,.8);
+    border-top: 1px solid hsl(0,0%,100%);
+    border-bottom: 1px solid hsla(0, 0%, 86%, 1);
+    background: linear-gradient( hsl(0, 0%, 98%), hsl(0, 0%, 94%) );
+	cursor: pointer;
+}
+
+.PropertyGroup-toggle:active {
+    border-top-color: transparent;
+    background: hsl(0, 0%, 92%);
+}
+
+.PropertyGroup-toggle:focus {
+    outline: none;
+}
+
+
+
+/* Property List ------------------------- */
+
+.Configurator .PropertyEditor {
+    background: hsl(0, 0%, 92%);
+}
+
+.Configurator .PropertyEditor:last-child {
+}

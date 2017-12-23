@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+<head>
+    <title>Configurator</title>
+    <meta charset="utf-8">
+
+    <link href="configurator.css" rel="stylesheet">
+    <link href="configurator-skin.css" rel="stylesheet">
+
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "properties": {
+                    "element": {"#": "configurator"},
+                    "propertiesTab": {"@": "propertiesTab"},
+                    "eventsTab": {"@": "eventsTab"},
+                    "methodsTab": {"@": "methodsTab"},
+                    "styleTab": {"@": "styleTab"}
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+
+            "tabController": {
+                "prototype": "montage/core/radio-button-controller",
+                "bindings": {
+                    "value": {"<->": "@owner.selectedTab"}
+                }
+            },
+
+            "content": {
+                "prototype": "montage/ui/substitution.reel",
+                "properties": {
+                    "element": {"#": "content"}
+                },
+                "bindings": {
+                    "switchValue": {"<-": "@tabController.value"}
+                }
+            },
+
+            "propertiesTab": {
+                "prototype": "matte/ui/radio-button.reel",
+                "properties": {
+                    "element": {"#": "propertiesTab"},
+                    "radioButtonController": {"@": "tabController"},
+                    "value": "properties"
+                },
+                "bindings": {
+                    "enabled": {"<-": "@owner.reelProxy.defined() || @owner.nodeProxy.defined()"}
+                }
+            },
+
+            "inspectorCondition": {
+                "prototype": "montage/ui/condition.reel",
+                "properties": {
+                    "element": {"#": "inspector-condition"},
+                    "removalStrategy": "hide"
+                },
+                "bindings": {
+                    "condition": {"<-": "@owner.reelProxy.defined()"}
+                }
+            },
+
+            "propertyInspector": {
+                "prototype": "./property-explorer.reel",
+                "properties": {
+                    "element": {"#": "propertyInspector"}
+                },
+                "bindings": {
+                    "editingDocument": {"<-": "@owner.editingDocument"},
+                    "inspectorController": {"<-": "@owner.inspectorControllers.0"},
+                    "object": {"<-": "@owner.reelProxy"},
+                    "objectBlueprint": {"<-": "@owner.objectBlueprint"}
+                }
+            },
+
+            "eventsTab": {
+                "prototype": "matte/ui/radio-button.reel",
+                "properties": {
+                    "element": {"#": "eventsTab"},
+                    "radioButtonController": {"@": "tabController"},
+                    "value": "events"
+                },
+                "bindings": {
+                    "enabled": {"<-": "@owner.reelProxy.defined()"}
+                }
+            },
+
+            "eventExplorer": {
+                "prototype": "./listener-explorer.reel",
+                "properties": {
+                    "element": {"#": "eventExplorer"}
+                },
+                "bindings": {
+                    "editingDocument": {"<-": "@owner.editingDocument"},
+                    "templateObject": {"<-": "@owner.reelProxy"},
+                    "objectBlueprint": {"<-": "@owner.objectBlueprint"}
+                }
+            },
+
+            "methodsTab": {
+                "prototype": "matte/ui/radio-button.reel",
+                "properties": {
+                    "element": {"#": "methodsTab"},
+                    "radioButtonController": {"@": "tabController"},
+                    "value": "methods"
+                },
+                "bindings": {
+                    "enabled": {"<-": "@owner.reelProxy.defined()"}
+                }
+            },
+
+            "styleTab": {
+                "prototype": "matte/ui/radio-button.reel",
+                "properties": {
+                    "element": {"#": "styleTab"},
+                    "radioButtonController": {"@": "tabController"},
+                    "value": "style"
+                },
+                "bindings": {
+                    "enabled": {"<-": "@owner.nodeProxy.defined()"}
+                }
+            }
+        }
+    </script>
+
+</head>
+<body>
+    <aside id="configurator" data-montage-id="configurator" class="Panel Configurator">
+        <nav class="Configurator-tabs">
+            <div data-montage-id="propertiesTab" class="Configurator-tab">Properties</div>
+            <div data-montage-id="eventsTab" class="Configurator-tab">Events</div>
+            <div data-montage-id="methodsTab" class="Configurator-tab">Methods</div>
+            <div data-montage-id="styleTab" class="Configurator-tab">Style</div>
+        </nav>
+        <div data-montage-id="content" class="Configurator-content">
+            <div data-arg="properties" data-montage-id="inspector-condition" class="Configurator-inspectorCondition">
+                <div data-montage-id="propertyInspector"></div>
+            </div>
+            <div data-arg="events" data-montage-id="eventExplorer"></div>
+        </div>
+    </aside>
+</body>
+</html>

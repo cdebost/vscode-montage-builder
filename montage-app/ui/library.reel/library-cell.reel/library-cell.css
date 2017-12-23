@@ -1,0 +1,167 @@
+.LibraryCell {
+}
+
+/* LibraryCell Button --------------------------------- */
+
+.LibraryCell-button.matte-Button {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	-ms-appearance: none;
+	appearance: none;
+	display: block;
+	width: 100%;
+	height: auto;
+	min-width: 0;
+	margin: 0;
+	padding: 4px 4px 4px 8px;	
+	font-family: inherit;
+	font-size: 12px;
+	line-height: 1;
+	color: hsl(0,0%,30%);
+	text-align: left;
+	border: none;
+	background: transparent;
+	cursor: move;
+}
+
+.LibraryCell-button.matte-Button:hover,
+.LibraryCell-button.matte-Button.active,
+.LibraryCell-button.matte-Button.active:hover {
+    background: transparent;
+}
+
+.LibraryCell-button.matte-Button:focus {
+	border-color: transparent;
+	background: transparent;
+}
+
+.LibraryCell-button[draggable=false].matte-Button {
+    background-color: hsla(43, 100%, 85%, 0.04);
+    pointer-events: none;
+    cursor: default;
+    border: 1px solid hsl(43, 20%, 20%);
+    border-bottom: 4px solid hsl(43, 100%, 85%);
+    padding: 7px 2px 4px 2px;
+    border-radius: 4px;
+}
+
+/* Icon --------------------------------- */
+
+.LibraryCell-button-icon {
+	display: inline-block;
+	margin: 0 8px 0 0;
+	width: 42px;
+	vertical-align: top;
+	align-self: center; /* Fixes icon being stretched in Chrome Canaray */
+}
+
+
+/* Label --------------------------------- */
+
+.LibraryCell-button-label {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+/* Description --------------------------------- */
+
+.LibraryCell-button-description {
+    display: none;
+}
+
+
+/* Grid --------------------------------- */
+
+.LibraryGroup {
+    font-size: 0;
+}
+
+.LibraryGroup-list {
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: flex;
+    -webkit-flex-flow: row wrap;
+    -moz-flex-flow: row wrap;
+    -ms-flex-flow: row wrap;
+    flex-flow: row wrap;
+}
+
+.LibraryCell {
+    -webkit-flex: 1 0 60px;
+    -moz-flex: 1 0 60px;
+    -ms-flex: 1 0 60px;
+    flex: 1 0 60px;
+    max-width: 60px;
+}
+
+.LibraryCell-button.matte-Button {
+    padding: 8px 4px;
+    text-align: center;
+    border-radius: 4px;
+	
+}
+
+.LibraryCell-button.matte-Button:hover {
+    background-color: hsl(0,0%,30%);
+}
+
+.LibraryCell-button-icon {
+    margin: 0;
+}
+
+.LibraryCell-button-label {
+    display: block;
+    font-size: 10px;
+    color: hsl(0, 0%, 70%);
+    text-align: center;
+    line-height: 16px;
+}
+
+
+/* List --------------------------------- */
+
+.Library.isList .LibraryGroup-list {
+    display: initial;
+    padding: 0;
+} 
+
+.Library.isList .LibraryCell {
+    max-width: initial;
+}
+
+.Library.isList .LibraryCell-button.matte-Button {
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: flex;
+    padding: 4px 4px 4px 12px;
+    border-radius: 0;
+    color: hsl(0, 0%, 70%);
+    -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.Library.isList .LibraryCell-button[draggable=false].matte-Button {
+    padding: 4px 4px 4px 8px;
+    border: none;
+    border-left: 4px solid hsl(43, 100%, 85%);
+}
+
+.Library.isList .LibraryCell:last-child .LibraryCell-button.matte-Button {
+}
+
+.Library.isList .LibraryCell-button-icon {
+    width: 28px;
+}
+
+.Library.isList .LibraryCell-button-label {
+    -webkit-flex: 1;
+       -moz-flex: 1;
+        -ms-flex: 1;
+            flex: 1;
+    font-size: 14px;
+    text-align: left;
+    margin-left: 12px;
+    line-height: 19px;
+}

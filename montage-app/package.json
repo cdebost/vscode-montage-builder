@@ -5,7 +5,8 @@
         "npm": "2.15.11"
     },
     "dependencies": {
-        "montage": "latest"
+        "montage": "latest",
+        "palette": "github.com:montagestudio/palette#master"
     },
     "devDependencies": {
         "montage-testing": "latest"

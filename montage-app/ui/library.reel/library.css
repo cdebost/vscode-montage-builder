@@ -1,0 +1,208 @@
+.Library {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border-left: 1px solid hsl(0, 0%, 22%);
+}
+
+
+.Library-tabs {
+    position: relative;
+    display: -webkit-flex;
+    display:    -moz-flex;
+    display:     -ms-flex;
+    display:         flex;
+    z-index: 1;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.Library-tab.matte-Button {
+    -webkit-flex: 1;
+       -moz-flex: 1;
+        -ms-flex: 1;
+            flex: 1;
+    height: auto;
+    margin: 0;
+    padding: 8px;
+    text-align: center;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1;
+    color: hsl(0, 0%, 90%);
+    border-radius: 0;
+    border: 1px solid hsl(0, 0%, 20%);
+    border-right: none;
+    background: -webkit-linear-gradient(hsl(0, 0%, 40%),hsl(0, 0%, 34%));
+    background: -moz-linear-gradient(hsl(0, 0%, 40%),hsl(0, 0%, 34%));
+    background: -ms-linear-gradient(hsl(0, 0%, 40%),hsl(0, 0%, 34%));
+    background: linear-gradient(hsl(0, 0%, 40%),hsl(0, 0%, 34%));
+    cursor: pointer;
+}
+
+.Library-tab.matte-Button:first-child {
+    border-left: none;
+}
+
+.Library-tab.matte-Button:focus {
+    border-color: hsl(0, 0%, 22%);
+}
+
+.Library-tab.matte-Button:hover {
+    color: hsl(0, 0%, 94%);
+    background: -webkit-linear-gradient(hsl(0, 0%, 44%),hsl(0, 0%, 38%));
+    background:    -moz-linear-gradient(hsl(0, 0%, 44%),hsl(0, 0%, 38%));
+    background:     -ms-linear-gradient(hsl(0, 0%, 44%),hsl(0, 0%, 38%));
+    background:         linear-gradient(hsl(0, 0%, 44%),hsl(0, 0%, 38%));
+}
+
+.Library-tab.matte-Button:active {
+    background: hsl(0, 0%, 20%);
+}
+
+/* TODO: Implement properly */
+.is-package .Library-tab:nth-child(1),
+.is-assets .Library-tab:nth-child(2) {
+    cursor: default;
+    color: hsl(0, 0%, 70%);
+    background: hsl(0, 0%, 25%);
+    border-bottom-color: hsla(0, 0%, 0%, 0);
+}
+
+
+/* Content ------------------------- */
+
+.Library-content {
+    -webkit-flex: 1;
+       -moz-flex: 1;
+        -ms-flex: 1;
+            flex: 1;
+    display: -webkit-flex;
+    display:    -moz-flex;
+    display:     -ms-flex;
+    display:         flex;
+    -webkit-flex-direction: column;
+       -moz-flex-direction: column;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    min-height: 0;
+}
+
+/* TODO: Implement properly */
+.is-package .AssetsLibrary,
+.is-assets .Library-packages {
+    display: none;
+}
+
+
+/* Packages Library ------------------------- */
+
+.Library-header {
+    position: relative;
+    display: -webkit-flex;
+    display:    -moz-flex;
+    display:     -ms-flex;
+    display:         flex;
+    padding: 8px;
+    height: 47px;
+    border-bottom: 1px solid hsla(0, 0%, 0%, 0.5);
+    background: hsl(0, 0%, 25%);
+    z-index: 1;
+}
+
+/* Header Button ------------------------- */
+
+.Library-viewModeButton.matte-Button {
+    position: relative;
+    min-width: initial;
+    width: 30px;
+    height: 30px;
+    margin: 0 0 0 4px;
+    padding: 0;
+    font-size: 40px;
+    line-height: 30px;
+    color: hsl(0, 0%, 84%);
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+}
+
+.Library-viewModeButton.matte-Button:hover {
+    color: hsl(0, 0%, 100%);
+    background: transparent;
+}
+
+.Library-viewModeButton.matte-Button.active {
+    background: hsla(0, 0%, 0%, .1);
+}
+
+.Library .Library-viewModeButton:before { content: ""; }
+.Library.isList .Library-viewModeButton:before { content: "⚏"; }
+
+
+
+/* List -------------------------------- */
+
+.Library-list {
+    -webkit-flex: 1;
+    -moz-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    position: relative;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+
+    /* background-color: transparent;
+     * Warning: Don't use a background-color here, it will be flattened with the drag-able icons.
+     */
+}
+
+
+
+/* Scrollbar -------------------------------- */
+
+.Library ::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 3px;
+    height: 0px;
+    background-color: hsl(0, 0%, 18%);
+}
+.Library ::-moz-scrollbar {
+    -moz-appearance: none;
+    width: 3px;
+    height: 0px;
+    background-color: hsl(0, 0%, 18%);
+}
+.Library ::-ms-scrollbar {
+    -ms-appearance: none;
+    width: 3px;
+    height: 0px;
+    background-color: hsl(0, 0%, 18%);
+}
+.Library ::scrollbar {
+    appearance: none;
+    width: 3px;
+    height: 0px;
+    background-color: hsl(0, 0%, 18%);
+}
+
+.Library ::-webkit-scrollbar-thumb {
+    border: none;
+    background-color: hsl(0, 0%, 32%);
+}
+.Library ::-moz-scrollbar-thumb {
+    border: none;
+    background-color: hsl(0, 0%, 32%);
+}
+.Library ::-ms-scrollbar-thumb {
+    border: none;
+    background-color: hsl(0, 0%, 32%);
+}
+.Library ::scrollbar-thumb {
+    border: none;
+    background-color: hsl(0, 0%, 32%);
+}

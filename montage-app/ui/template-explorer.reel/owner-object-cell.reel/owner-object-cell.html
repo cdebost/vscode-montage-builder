@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="owner-object-cell.css">
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "properties": {
+                    "element": {"#": "template-object-cell"}
+                },
+                "bindings": {
+                    "classList.has('TemplateObjectCell--owner')": {
+                        "<-": "@owner.reelProxy.label == 'owner'"
+                    },
+                    "classList.has('selected')": {
+                        "<-": "@owner.templateObjectsController.selection.has(reelProxy)"
+                    },
+                    "classList.has('Filament--willAcceptDrop')": {"<-": "@owner._willAcceptDrop"}
+                }
+            },
+
+            "header": {
+                "prototype": "../content/template-object-header.reel",
+                "properties": {
+                    "element": {"#": "header"}
+                },
+                "bindings": {
+                    "editingDocument": {"<-": "@owner.editingDocument"},
+                    "reelProxy": {"<-": "@owner.reelProxy"},
+                    "nodeProxy": {"<-": "@owner.nodeProxy"}
+                }
+            },
+
+            "editPropertiesCondition": {
+                "prototype": "montage/ui/condition.reel",
+                "properties": {
+                    "element": {"#": "editPropertiesCondition"},
+                    "removalStrategy": "hide"
+                },
+                "bindings": {
+                    "condition": {"<-": "@editPropertiesButton.pressed"}
+                }
+            },
+
+            "editPropertiesButton": {
+                "prototype": "matte/ui/toggle-button.reel",
+                "properties": {
+                    "element": {"#": "editPropertiesButton"},
+                    "title": "Edit"
+                }
+            },
+
+            "editProperties": {
+                "prototype": "../content/edit-properties.reel",
+                "properties": {
+                    "element": {"#": "editProperties"}
+                },
+                "bindings": {
+                    "ownerObject": {"<-": "@owner.reelProxy"},
+                    "editingDocument": {"<-": "@owner.editingDocument"}
+                }
+            },
+
+            "elementCondition": {
+                "prototype": "montage/ui/condition.reel",
+                "properties": {
+                    "element": {"#": "elementCondition"},
+                    "removalStrategy": "hide"
+                },
+                "bindings": {
+                    "condition": {"<-": "@owner.isTemplateObjectComponent"}
+                }
+            },
+
+            "elementField": {
+                "prototype": "../content/element-field.reel",
+                "properties": {
+                    "element": {"#": "elementField"}
+                },
+                "bindings": {
+                    "entity": {"<-": "@owner.reelProxy"}
+                }
+            },
+
+            "select": {
+                "prototype": "montage/composer/press-composer",
+                "properties": {
+                    "component": {"@": "owner"}
+                },
+                "listeners": [
+                    {
+                        "type": "press",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            }
+
+        }
+    </script>
+</head>
+<body>
+<ul>
+
+<header data-montage-id="template-object-cell" class="TemplateObjectCell TemplateObjectCell--owner">
+
+    <header data-montage-id="header">
+        <span data-arg="title">owner</span>
+        <div data-arg="toolbar">
+            <button data-montage-id="editPropertiesButton" class="TemplateObjectHeader-button TemplateObjectHeader-button--edit"></button>
+        </div>
+    </header>
+
+    <section data-montage-id="editPropertiesCondition" class="TemplateObjectCell-section">
+        <div data-montage-id="editProperties"></div>
+    </section>
+
+    <section data-montage-id="elementCondition" class="TemplateObjectCell-section">
+        <div data-montage-id="elementField"></div>
+    </section>
+</header>
+
+</ul>
+</body>
+</html>

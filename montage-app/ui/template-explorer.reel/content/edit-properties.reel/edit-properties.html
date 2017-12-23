@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="edit-properties.css">
+    <script type="text/montage-serialization">
+    {
+        "owner": {
+            "properties": {
+                "element": {"#": "edit-properties"}
+            }
+        },
+
+        "properties": {
+            "prototype": "../edit-properties-list.reel",
+            "properties": {
+                "element": {"#": "properties"},
+                "inputPlaceholder": "Property name"
+            },
+            "bindings": {
+                "inputValue": {"<->": "@owner.ownerObject.editingDocument.sideData.addPropertyInputValue"},
+                "contentController": {"<-": "@owner.propertiesController"}
+            },
+            "listeners":[
+                {"type": "add", "listener": {"@": "owner"}},
+                {"type": "remove", "listener": {"@": "owner"}}
+            ]
+        },
+
+        "cardinalityConverter": {
+            "prototype": "./cardinality-converter"
+        },
+
+        "name": {
+            "prototype": "montage/ui/text.reel",
+            "properties": {
+                "element": {"#": "name"}
+            },
+            "bindings": {
+                "value": {"<-": "@properties:iteration.object.name"}
+            }
+        },
+
+        "valueType": {
+            "prototype": "matte/ui/select.reel",
+            "properties": {
+                "element": {"#": "valueType"},
+                "content": [
+                    {"text": "string", "value": "string"},
+                    {"text": "number", "value": "number"},
+                    {"text": "boolean", "value": "boolean"},
+                    {"text": "date", "value": "date"},
+                    {"text": "enum", "value": "enum"},
+                    {"text": "url", "value": "url"},
+                    {"text": "object", "value": "object"}
+                ]
+            },
+            "bindings": {
+                "propertyBlueprint": {"<-": "@properties:iteration.object"},
+                "value": {"<-": "@properties:iteration.object.valueType"}
+            },
+            "listeners": [
+                {"type": "action", "listener": {"@": "owner"}}
+            ]
+        },
+
+        "multiple": {
+            "prototype": "matte/ui/input-checkbox.reel",
+            "properties": {
+                "element": {"#": "multiple"}
+            },
+            "bindings": {
+                "propertyBlueprint": {"<-": "@properties:iteration.object"},
+                "checked": {
+                    "<-": "@properties:iteration.object.cardinality",
+                    "converter": {"@": "cardinalityConverter"}
+                }
+            },
+            "listeners": [
+                {"type": "action", "listener": {"@": "owner"}}
+            ]
+        },
+
+        "collectionCondition": {
+            "prototype": "montage/ui/condition.reel",
+            "properties": {
+                "element": {"#": "collectionCondition"},
+                "removalStrategy": "hide"
+            },
+            "bindings": {
+                "condition": {"<-": "@multiple.checked"}
+            }
+        },
+
+        "collectionValueType": {
+            "prototype": "matte/ui/select.reel",
+            "properties": {
+                "element": {"#": "collectionValueType"},
+                "content": [
+                    {"text": "list", "value": "list"},
+                    {"text": "set", "value": "set"}
+                ]
+            },
+            "bindings": {
+                "propertyBlueprint": {"<-": "@properties:iteration.object"},
+                "value": {"<-": "@properties:iteration.object.collectionValueType"}
+            },
+            "listeners": [
+                {"type": "action", "listener": {"@": "owner"}}
+            ]
+        },
+
+        "events": {
+            "prototype": "../edit-properties-list.reel",
+            "properties": {
+                "element": {"#": "events"},
+                "inputPlaceholder": "Event name"
+            },
+            "bindings": {
+                "inputValue": {"<->": "@owner.ownerObject.editingDocument.sideData.addEventInputValue"},
+                "contentController": {"<-": "@owner.eventsController"}
+            },
+            "listeners":[
+                {"type": "add", "listener": {"@": "owner"}},
+                {"type": "remove", "listener": {"@": "owner"}}
+            ]
+        },
+
+        "eventName": {
+            "prototype": "montage/ui/text.reel",
+            "properties": {
+                "element": {"#": "eventName"}
+            },
+            "bindings": {
+                "value": {"<-": "@events:iteration.object.name"}
+            }
+        }
+
+    }
+    </script>
+</head>
+<body>
+    <div data-montage-id="edit-properties" class="EditProperties">
+        <details class="EditProperties-group" open>
+            <summary class="EditProperties-toggle">Properties</summary>
+            <div data-montage-id="properties">
+                <div data-arg="item">
+                    <span data-montage-id="name" class="EditProperties-name"></span>
+                    <select data-montage-id="valueType" class="Select"></select>
+
+                    <div class="EditProperties-multi">
+                        <label><input type="checkbox" data-montage-id="multiple" class="Checkbox"> multi</label>
+                        <span data-montage-id="collectionCondition">
+                            <select data-montage-id="collectionValueType" class="Select"></select>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <details class="EditProperties-group">
+            <summary class="EditProperties-toggle">Events</summary>
+            <div data-montage-id="events">
+                <div data-arg="item">
+                    <span data-montage-id="eventName" class="EditProperties-name"></span>
+                </div>
+            </div>
+        </details>
+
+    </div>
+</body>
+</html>

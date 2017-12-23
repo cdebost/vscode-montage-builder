@@ -1,0 +1,106 @@
+.EditProperties {
+    padding: 8px;
+    font-size: 12px;
+    background: hsl(0, 0%, 86%);
+    border-top: 1px solid hsla(0, 0%, 0%, .1);
+    border-bottom: 1px solid hsla(0, 0%, 0%, .1);
+}
+
+.EditProperties .Select {
+    height: 24px;
+    padding: 0 .6em;
+    line-height: 1;
+}
+
+/* List */
+
+.EditProperties-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.EditProperties-listItem {
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: flex;
+    padding: 5px 10px;
+    border-bottom: 1px solid hsla(0, 0%, 0%, 0.1);
+}
+
+.EditProperties-listItem:hover {
+    background-color: hsla(0,0%,100%,0.6);
+}
+
+.EditProperties-listItem Button.Button--circle {
+    margin: 2px;
+}
+
+.EditProperties-name {
+    width: 152px;
+    font-size: 14px;
+    line-height: 24px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.EditProperties-multi {
+    -webkit-flex: 1;
+    -moz-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    margin-left: 4px;
+}
+
+.EditProperties-multi label {
+    line-height: 24px;
+}
+
+
+.EditProperties-bar {
+    padding: 8px;
+}
+
+
+/* Groups ------------------------- */
+
+.EditProperties-group {
+    margin-bottom: 8px;
+}
+
+.EditProperties-group:last-child {
+    margin-bottom: 0;
+}
+
+
+/* Group Toggle ------------------------- */
+
+.EditProperties-toggle {
+    position: relative;
+	padding: 4px 8px;
+	margin: 0;
+	font-size: 12px;
+	font-weight: bold;
+	color: hsl(0,0%,50%);
+	cursor: pointer;
+	border-radius: 4px;
+	box-shadow: inset 0 0 0 1px hsla(0,0%,0%,.1), 0 1px 0 hsla(0,0%,100%,.2);
+	background-color: hsl(0,0%,90%);
+}
+
+.EditProperties-toggle:focus {
+    outline: none;
+}
+
+.EditProperties-group[open] .EditProperties-toggle {
+    border-radius: 4px 4px 0 0;
+    text-shadow: 0 1px 0 hsla(0,0%,100%,.8);
+    border-bottom: 1px solid hsla(0,0%,0%,.1);
+    box-shadow: inset 0 1px 0 hsla(0,0%,100%,1);
+	background: -webkit-linear-gradient( hsl(0,0%,99%), hsl(0,0%,96%) );
+	background: -moz-linear-gradient( hsl(0,0%,99%), hsl(0,0%,96%) );
+	background: -ms-linear-gradient( hsl(0,0%,99%), hsl(0,0%,96%) );
+	background: linear-gradient( hsl(0,0%,99%), hsl(0,0%,96%) );
+}

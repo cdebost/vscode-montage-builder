@@ -1,0 +1,213 @@
+<!doctype html>
+<html>
+<head>
+    <title>Main</title>
+    <meta charset="utf-8">
+
+    <link href="component-editor.css" rel="stylesheet" />
+
+    <script type="text/montage-serialization">
+        {
+            "localizer": {
+                "object": "montage/core/localizer[defaultLocalizer]"
+            },
+
+            "owner": {
+                "properties": {
+                    "element": {"#": "componentEditor"},
+                    "_modalEditorSlot": {"#": "modalEditorSlot"},
+                    "templateObjectsController": {"@": "templateObjectsController"},
+                    "propertyJig": {"@": "bindingCreator"},
+                    "propertyOverlay": {"@": "bindingOverlay"}
+                },
+                "listeners": [
+                    {
+                        "type": "selectElement",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "selectComponent",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+
+            "library": {
+                "prototype": "ui/library.reel",
+                    "properties": {
+                    "element": {"#": "library"}
+                },
+                "bindings": {
+                    "groups": {"<->": "@owner.projectController.libraryGroups"},
+                    "assetsManager": {"<-": "@owner.projectController.assetsManager"},
+                    "editingComponentPrototype": {"<-": "@owner.currentDocument._moduleId"}
+                },
+                "listeners": [
+                    {
+                        "type": "addComponent",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+
+            "templateObjectsController": {
+                "prototype": "montage/core/range-controller",
+                "bindings": {
+                    "content": {"<-": "@owner.currentDocument.templateNodes.concat(@owner.currentDocument.editingProxies)"},
+                    "selection": {"<->": "@owner.currentDocument.selectedObjects"}
+                }
+            },
+
+            "HIDDEN_STATE": {
+                "object": "ui/panel.reel[HIDDEN_STATE]"
+            },
+
+            "LOCKED_STATE": {
+                "object": "ui/panel.reel[LOCKED_STATE]"
+            },
+
+            "configurator": {
+                "prototype": "ui/configurator.reel",
+                "properties": {
+                    "element": {"#": "configurator"}
+                },
+                "bindings": {
+                    "editingDocument": {"<-": "@owner.currentDocument"},
+                    "_selectedObject": {"<-": "editingDocument.selectedObjects.0"},
+                    "nodeProxy": {"<-": "_selectedObject.proxyType == 'NodeProxy' ? _selectedObject : reelProxy.properties.get('element')"},
+                    "reelProxy": {"<-": "_selectedObject.proxyType == 'ProxyObject' ? _selectedObject : nodeProxy.component"},
+                    "viewController": {"<-": "@owner.viewController"},
+                    "state": {"<-": "@LOCKED_STATE"}
+                }
+            },
+
+            "templateExplorer": {
+                "prototype": "ui/template-explorer.reel",
+                "properties": {
+                    "element": {"#": "templateExplorer"},
+                    "_blocksOwnerComponentDraw": true
+                },
+                "bindings": {
+                    "templateObjectsController": {"<-": "@owner.templateObjectsController"},
+                    "editingDocument": {"<-": "@owner.currentDocument"}
+                }
+            },
+
+            "eventTargetOverlay": {
+                "prototype": "montage/ui/overlay.reel",
+                "properties": {
+                    "element": {"#": "eventTargetOverlay"},
+                    "delegate": {"@": "listenerCreator"}
+                }
+            },
+
+            "listenerCreator": {
+                "prototype": "ui/listener-jig.reel",
+                "properties": {
+                    "element": {"#": "listenerCreator"}
+                },
+                "bindings": {
+                    "editingDocument": {"<-": "@owner.currentDocument"}
+                },
+                "listeners": [
+                    {
+                        "type": "commit",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "discard",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+
+            "bindingOverlay": {
+                "prototype": "montage/ui/overlay.reel",
+                "properties": {
+                    "element": {"#": "bindingOverlay"},
+                    "delegate": {"@": "bindingCreator"}
+                }
+            },
+
+            "bindingCreator": {
+                "prototype": "ui/property-jig.reel",
+                "properties": {
+                    "element": {"#": "bindingCreator"}
+                },
+                "bindings": {
+                    "editingDocument": {"<-": "@owner.currentDocument"}
+                },
+                "listeners": [
+                    {
+                        "type": "commit",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "discard",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+
+            "exitEditorKeyComposer": {
+                "prototype": "montage/composer/key-composer",
+                "properties": {
+                    "keys": "escape",
+                    "identifier": "exitModalEditor",
+                    "component": {"@": "application"}
+                },
+                "listeners": [
+                    {
+                        "type": "keyPress",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+
+            "overlayPanel": {
+                "prototype": "adaptor/client/ui/modal-overlay.reel",
+                "properties": {
+                    "element": {"#": "overlayPanel"},
+                    "visible": false
+                }
+            },
+
+            "overlayPanelMessage": {
+                "prototype": "montage/ui/text.reel",
+                "properties": {
+                    "element": {"#": "overlayPanelMessage"}
+                }
+            },
+
+             "application": {}
+        }
+    </script>
+
+</head>
+<body>
+
+    <section data-montage-id="componentEditor" class="ComponentEditor">
+
+        <!-- TODO hide overlays by default; they are considered flow items-->
+        <section>
+            <div data-montage-id="eventTargetOverlay">
+                <div data-montage-id="listenerCreator"></div>
+            </div>
+
+            <div data-montage-id="bindingOverlay">
+                <div data-montage-id="bindingCreator"></div>
+            </div>
+        </section>
+
+        <section data-montage-id="templateExplorer" class="ComponentEditor-column palette" data-skin="light"></section>
+
+        <aside data-montage-id="configurator" class="Column palette" data-skin="light"></aside>
+        <aside data-arg="modalEditor" data-montage-id="modalEditorSlot" class="modalEditorSlot"></aside>
+        <aside data-montage-id="library" class="palette" data-skin="dark"></aside>
+        <div data-montage-id="overlayPanel">
+            <span data-arg="panel" data-montage-id="overlayPanelMessage"></span>
+        </div>
+    </section>
+
+</body>
+</html>

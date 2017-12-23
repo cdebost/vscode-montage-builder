@@ -1,0 +1,36 @@
+.ElementField {
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: flex;
+    -webkit-align-items: center;
+    -moz-align-items: center;
+    -ms-align-items: center;
+    align-items: center;
+}
+
+.ElementField-icon {
+    width: 14px;
+    height: 14px;
+    margin: 9px;
+}
+
+.ElementField-label {
+    -webkit-flex: 1;
+       -moz-flex: 1;
+        -ms-flex: 1;
+            flex: 1;
+}
+
+.ElementField-tagName {
+    margin-right: 4px;
+    color: hsl(0, 0%, 30%);
+}
+
+.ElementField--invalid .ElementField-tagName {
+    color: red;
+}
+
+.ElementField-id {
+    color: hsl(0, 0%, 30%);
+}

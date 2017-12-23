@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="template-object-cell.css">
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "properties": {
+                    "element": {"#": "template-object-cell"},
+                    "toggle": {"@": "toggleExpanded"}
+                },
+                "bindings": {
+                    "classList.has('TemplateObjectCell--owner-cell')": {
+                        "<-": "@owner.templateObject.label == 'owner'"
+                    },
+                    "classList.has('Filament--willAcceptDrop')": {
+                        "<-": "@owner._willAcceptDrop"},
+
+                    "classList.has('TemplateObjectCell--isInProjectPackage')": {
+                        "<-": "@owner.isInProjectPackage"},
+
+                    "classList.has('TemplateObjectCell--highlighted')": {
+                        "<-": "@owner.templateExplorer.highlightedComponent == @owner.templateObject"},
+
+                    "classList.has('TemplateObjectCell--excluded')": {
+                        "<-": "@owner.nodeProxy && !@owner.templateExplorer.templateObjectsController.organizedContent.has(@owner.nodeProxy)"
+                    },
+
+                    "classList.has('TemplateObjectCell--notCollapsible')": {
+                        "<-": "!isCollapsible"
+                    },
+
+                    "classList.has('TemplateObjectCell--selected')": {
+                        "<-": "@owner.reelProxy.defined() ? @owner.editingDocument.selectedObjects.has(@owner.reelProxy) : @owner.editingDocument.selectedObjects.has(@owner.nodeProxy)"
+                    }
+                }
+            },
+
+            "header": {
+                "prototype": "../content/template-object-header.reel",
+                "properties": {
+                    "element": {"#": "header"}
+                },
+                "bindings": {
+                    "editingDocument": {"<-": "@owner.editingDocument"},
+                    "reelProxy": {"<-": "@owner.reelProxy"},
+                    "nodeProxy": {"<-": "@owner.nodeProxy"}
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+
+            "objectLabel": {
+                "prototype": "ui/text-editor-field.reel",
+                "properties": {
+                    "element": {"#": "objectLabel"},
+                    "shouldSaveOnBlur": true
+                },
+                "bindings": {
+                    "value": {"<-": "@owner.reelProxy.label ?? @owner.nodeProxy.montageId ?? @owner.nodeProxy.className ?? @owner.nodeProxy.tagName"},
+                    "classList.has('TemplateObjectCell-objectLabel--isClassName')":
+                        {"<-": "!@owner.reelProxy && !@owner.nodeProxy.montageId && @owner.nodeProxy.className"},
+                    "classList.has('TemplateObjectCell-objectLabel--isMontageId')":
+                        {"<-": "!@owner.reelProxy && @owner.nodeProxy.montageId"},
+                    "classList.has('TemplateObjectCell-objectLabel--isComponentLabel')":
+                        {"<-": "@owner.reelProxy"}
+                },
+                "listeners": [
+                    {"type": "action", "listener": {"@": "owner"}}
+                ]
+            },
+
+            "hiddenToggleButton": {
+                "prototype": "matte/ui/toggle-button.reel",
+                "properties": {
+                    "element": {"#": "hiddenToggleButton"},
+                    "title": "Hidden"
+                },
+                "bindings": {
+                    "classList.has('montage-invisible')": {"<-": "!@owner.reelProxy || !@owner.nodeProxy"},
+                    "pressed": {"<-": "!@owner.reelProxy.editorMetadata.get('isHidden')"}
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+
+            "hasChildrenCondition": {
+                "prototype": "montage/ui/condition.reel",
+                "properties": {
+                    "element": {"#": "hasChildrenCondition"},
+                    "removalStrategy": "hide"
+                },
+                "bindings": {
+                    "condition": {"<-": "@owner.isCollapsible"}
+                }
+            },
+
+            "toggleExpanded": {
+                "prototype": "ui/toggle.reel",
+                "properties": {
+                    "element": {"#": "toggleExpanded"}
+                },
+                "bindings": {
+                    "checked": {"<->": "@owner.isExpanded"},
+                    "label": {"<-": "@objectLabel.value + ' expanded'"}
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<ul>
+
+<div data-montage-id="template-object-cell" class="TemplateObjectCell-Wrapper">
+    <div data-montage-id="hasChildrenCondition" class="toggle">
+        <input data-montage-id="toggleExpanded" type="checkbox">
+    </div>
+
+    <li class="TemplateObjectCell TemplateExplorer-list-item">
+        <header data-montage-id="header">
+            <div data-arg="title" data-montage-id="objectLabel"></div>
+            <div data-arg="toolbar">
+                <button data-montage-id="hiddenToggleButton" class="TemplateObjectCell-hiddenToggleButton"></button>
+            </div>
+        </header>
+    </li>
+</div>
+
+</ul>
+</body>
+</html>

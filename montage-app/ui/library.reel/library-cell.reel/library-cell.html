@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="library-cell.css">
+    <script type="text/montage-serialization">
+    {
+        "owner": {
+            "properties": {
+                "element": {"#": "library-cell"},
+                "icon": {"@": "prototypeIcon"}
+            }
+        },
+
+        "prototypeIcon": {
+            "prototype": "matte/ui/image.reel",
+            "properties": {
+                "element": {"#": "prototype-icon"}
+            },
+            "bindings": {
+                "src": {"<-": "@owner.prototypeObject.iconUrl"}
+            }
+        },
+
+        "prototypeName": {
+            "prototype": "montage/ui/text.reel",
+            "properties": {
+                "element": {"#": "prototype-name"}
+            },
+            "bindings": {
+                "value": {"<-": "@owner.prototypeObject.name"}
+            }
+        },
+
+        "addButton": {
+            "prototype": "matte/ui/button.reel",
+            "properties": {
+                "element": {"#": "add-button"},
+                "identifier": "prototypeButton"
+            },
+            "bindings": {
+                "draggable": {"<-": "!@owner.prototypeObject.moduleIds.has(@owner.editingComponentPrototype)"}
+            },
+            "listeners": [
+                {
+                    "type": "action",
+                    "listener": {"@": "owner"}
+                }
+            ]
+        }
+    }
+    </script>
+</head>
+<body>
+    <li data-montage-id="library-cell" class="LibraryCell">
+        <div data-montage-id="add-button" class="LibraryCell-button">
+            <img data-montage-id="prototype-icon" class="LibraryCell-button-icon" draggable="false" src="../../../assets/img/library-icon.png" alt="">
+            <span data-montage-id="prototype-name" class="LibraryCell-button-label"></span>
+        </div>
+    </li>
+</body>
+</html>

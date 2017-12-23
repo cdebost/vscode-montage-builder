@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="element-field.css">
+    <script type="text/montage-serialization">
+    {
+        "owner": {
+            "properties": {
+                "element": {"#": "ElementField"}
+            },
+            "bindings": {
+                "classList.has('ElementField--invalid')": {"<-": "!@owner.entity.isInTemplate"},
+                "classList.has('Filament--willAcceptDrop')": {"<-": "@owner._willAcceptDrop"}
+            }
+        },
+
+        "elementTagName": {
+            "prototype": "montage/ui/text.reel",
+            "properties": {
+                "element": {"#": "elementTagName"}
+            },
+            "bindings": {
+                "value": {"<-": "@owner.entity.tagName || 'Drop element here'"}
+            }
+        },
+
+        "elementId": {
+            "prototype": "montage/ui/text.reel",
+            "properties": {
+                "element": {"#": "elementId"}
+            },
+            "bindings": {
+                "value": {"<-": "@owner.entity.montageId"}
+            }
+        },
+
+        "removeElement": {
+            "prototype": "matte/ui/button.reel",
+            "properties": {
+                "element": {"#": "removeElement"}
+            },
+            "bindings": {
+                "enabled": {"<-": "@owner.entity"},
+                "classList.has('montage-invisible')": {"<-": "(@owner.templateObject.label == 'owner') || !@owner.entity"},
+                "detail.get('templateObject')": {"<-": "@owner.templateObject"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-montage-id="ElementField" class="ElementField">
+        <img class="ElementField-icon" src="../../../../assets/icons/tag.png" alt="Element">
+        <label class="ElementField-label">
+            <span data-montage-id="elementTagName" class="ElementField-tagName"></span>
+            <em data-montage-id="elementId" class="ElementField-id"></em>
+        </label>
+        <button data-montage-id="removeElement" class="TemplateObjectCell-button">-</button>
+    </div>
+</body>
+</html>

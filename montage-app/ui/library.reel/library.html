@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+<head>
+    <title>Library</title>
+    <meta charset="utf-8">
+
+    <link href="library.css" rel="stylesheet" />
+
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "properties": {
+                    "element": {"#": "library"},
+                    "groupsController": {"@": "groupsController"}
+                },
+                "bindings": {
+                    "classList.has('isList')": {
+                        "<-": "@owner.isList"
+                    }
+                }
+            },
+
+            "groupsController": {
+                "prototype": "montage/core/range-controller",
+                "properties": {
+                    "filterPath": "libraryItems && libraryItems.length"
+                },
+                "bindings": {
+                    "content": {"<-": "@owner.groups"}
+                }
+            },
+
+            "groupList": {
+                "prototype": "montage/ui/repetition.reel",
+                "properties": {
+                    "element": {"#": "groupList"}
+                },
+                "bindings": {
+                    "contentController": {"<-": "@owner.groupsController"}
+                }
+            },
+
+            "group": {
+                "prototype": "./library-group.reel",
+                "properties": {
+                    "element": {"#": "group"}
+                },
+                "bindings": {
+                    "details": {"<-": "@groupList:iteration.object"},
+                    "editingComponentPrototype": {"<-": "@owner.editingComponentPrototype"},
+                    "filterPath": {"<-": "@owner.filterPath"}
+                }
+            },
+
+            "filterInput": {
+                "prototype": "ui/widgets/input-search.reel",
+                "properties": {
+                    "element": {"#": "filterInput"},
+                    "placeholder": "Search"
+                },
+                "bindings": {
+                    "value": {"<->": "@owner.filterTerm"}
+                }
+            },
+            
+            "viewModeButton": {
+                "prototype": "matte/ui/toggle-button.reel",
+                "properties": {
+                    "element": {"#": "viewModeButton"}
+                },
+                "bindings": {
+                    "pressed": {"<->": "@owner.isList"}
+                }
+            },
+            
+            "libraryTab": {
+                "prototype": "matte/ui/button.reel",
+                "properties": {
+                    "element": {"#": "libraryTab"}
+                },
+                "listeners": [{
+                    "type": "action",
+                    "listener": { "@": "owner" }
+                }]
+            },
+            
+            "assetsLibraryTab": {
+                "prototype": "matte/ui/button.reel",
+                "properties": {
+                    "element": {"#": "assetsLibraryTab"}
+                },
+                "listeners": [{
+                    "type": "action",
+                    "listener": { "@": "owner" }
+                }]
+            },
+
+            "assetsLibrary": {
+                "prototype": "ui/assets-library.reel",
+                "properties": {
+                    "element": {"#": "assetsLibrary"}
+                },
+                "bindings": {
+                    "assetsManager": {"<-": "@owner.assetsManager"}
+                }
+            }
+
+        }
+    </script>
+
+</head>
+<body>
+    <aside data-montage-id="library" class="Panel Library is-package">
+        <nav class="Library-bar Library-tabs">
+            <button data-montage-id="libraryTab" class="Library-tab">Library</button>
+            <button data-montage-id="assetsLibraryTab" class="Library-tab">Assets</button>
+        </nav>
+        <div class="Library-content Library-packages">
+            <header class="Library-header">
+                <input data-montage-id="filterInput" class="Library-search" type="search" placeholder="Search Library">
+                <button data-montage-id="viewModeButton" class="Library-viewModeButton" data-icon></button>
+            </header>
+            <div class="Shadow Shadow--top"></div>
+            <div data-montage-id="groupList" class="Library-list">
+                <details data-montage-id="group"></details>
+            </div>
+        </div>
+        <div data-montage-id="assetsLibrary" class="Library-content"></div>
+    </aside>
+
+</body>
+</html>

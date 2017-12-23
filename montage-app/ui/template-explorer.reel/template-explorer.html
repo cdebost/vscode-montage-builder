@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="template-explorer.css">
+    <script type="text/montage-serialization">
+    {
+        "owner": {
+            "prototype": "ui/template-explorer.reel",
+            "properties": {
+                "element": {"#": "template-explorer"},
+                "templateTreeController": {"@": "templateTreeController"}
+            },
+            "bindings": {
+                "classList.has('Filament--willAcceptDrop')": {"<-": "@owner._willAcceptDrop"},
+                "templateObjectFilterTerm": {"<->": "editingDocument.sideData.templateObjectFilterTerm"},
+                "hiddenCardsCount": {"<-": "@owner.templateObjectsController.content.filter{!!editorMetadata.get('isHidden')}.length"}
+            },
+            "listeners": [
+                {
+                    "type": "action",
+                    "listener": {"@": "owner"}
+                }
+            ]
+        },
+        "hiddenCount": {
+            "prototype": "montage/ui/text.reel",
+            "properties": {
+                "element": {"#": "hiddenCount"},
+                "value": "Text"
+            },
+            "bindings": {
+                "value": {"<-": "@owner.hiddenCardsCount"}
+            }
+        },
+        "ownerObjectCell": {
+            "prototype": "./owner-object-cell.reel",
+            "properties": {
+                "element": {"#": "ownerObjectCell"}
+            },
+            "bindings": {
+                "editingDocument": {"<-": "@owner.editingDocument"},
+                "reelProxy": {"<-": "@owner.editingDocument.editingProxyMap.owner"},
+                "templateObjectsController": {"<-": "@owner.templateObjectsController"}
+            }
+        },
+        "showHidden": {
+            "prototype": "matte/ui/toggle-button.reel",
+            "properties": {
+                "element": {"#": "showHidden"}
+            },
+            "bindings": {
+                "pressed": {"<->": "!@owner.showHidden"}
+            }
+        },
+        "templateObjectFilter": {
+            "prototype": "ui/widgets/input-search.reel",
+            "properties": {
+                "element": {"#": "templateObjectFilter"}
+            },
+            "bindings": {
+                "value": {"<->": "@owner.templateObjectFilterTerm"}
+            }
+        },
+        "objectsTreeController": {
+            "prototype": "core/tree-controller",
+            "properties": {
+                "childrenPath": "children",
+                "expandedPath": "expanded",
+                "initiallyExpanded": true,
+                "content": {"children": []}
+            },
+            "bindings": {
+                "content.children": {"<-": "@owner.editingDocument.editingProxies.filter{!properties.get('element').defined()}"}
+            }
+        },
+        "objectList": {
+            "prototype": "ui/tree.reel",
+            "properties": {
+                "element": {"#": "objectList"},
+                "isSelectionEnabled": true,
+                "ignoreRoot": true
+            },
+            "bindings": {
+                "treeController": {"<-": "@objectsTreeController"}
+            }
+        },
+        "objectCell": {
+            "prototype": "./template-object-cell.reel",
+            "properties": {
+                "element": {"#": "objectCell"},
+                "_blocksOwnerComponentDraw": true
+            },
+            "bindings": {
+                "editingDocument": {"<-": "@owner.editingDocument"},
+                "templateExplorer": {"<-": "@owner"},
+                "reelProxy": {"<-": "@objectCell.parentComponent.iteration.content"},
+                "isExpanded": {"<->": "@objectCell.parentComponent.iteration.expanded"},
+                "isCollapsible": {"<->": "@objectCell.parentComponent.iteration.children.length"}
+            }
+        },
+        "templateTreeController": {
+            "prototype": "core/tree-controller",
+            "properties": {
+                "childrenPath": "children",
+                "expandedPath": "expanded",
+                "initiallyExpanded": true
+            },
+            "bindings": {
+                "content": {"<-": "@owner.editingDocument.templateBodyNode.children[0]"}
+            }
+        },
+        "templateNodeList": {
+            "prototype": "ui/tree.reel",
+            "properties": {
+                "element": {"#": "templateNodeList"},
+                "isSelectionEnabled": true,
+                "ignoreRoot": true
+            },
+            "bindings": {
+                "treeController": {"<-": "@owner.templateTreeController"}
+            }
+        },
+        "templateObjectCell": {
+            "prototype": "./template-object-cell.reel",
+            "properties": {
+                "element": {"#": "templateObjectCell"},
+                "_blocksOwnerComponentDraw": true
+            },
+            "bindings": {
+                "editingDocument": {"<-": "@owner.editingDocument"},
+                "templateExplorer": {"<-": "@owner"},
+                "nodeProxy": {"<-": "@templateObjectCell.parentComponent.iteration.content"},
+                "reelProxy": {"<-": "nodeProxy.component"},
+                "isExpanded": {"<->": "@templateObjectCell.parentComponent.iteration.expanded"},
+                "isCollapsible": {"<->": "@templateObjectCell.parentComponent.iteration.children.length"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-montage-id="template-explorer" class="TemplateExplorer">
+        <header class="TemplateExplorer-header Bar">
+            <div>
+                <input data-montage-id="templateObjectFilter" class="TemplateExplorer-search" type="search" placeholder="Search Template">
+            </div>
+            <label class="TemplateExplorer-hiddenControl">
+                <button data-montage-id="showHidden" class="TemplateObjectCell-hiddenToggleButton" title="Toggle Hidden"></button>
+                <span data-montage-id="hiddenCount" class="TemplateExplorer-header-counter"></span>
+            </label>
+        </header>
+        <section data-montage-id="ownerObjectCell"></section>
+        <ul data-montage-id="objectList" class="TemplateExplorer-objectList">
+            <li data-montage-id="objectCell" data-arg="treeNode"></li>
+        </ul>
+        <ul data-montage-id="templateNodeList" class="TemplateExplorer-list">
+            <li data-montage-id="templateObjectCell" data-arg="treeNode"></li>
+        </ul>
+    </div>
+</body>
+</html>
