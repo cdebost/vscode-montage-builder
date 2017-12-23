@@ -1,7 +1,7 @@
 {
-    "name": "package-configurator",
-    "displayName": "Package Configurator",
-    "description": "A GUI for managing a javascript app's dependencies.",
+    "name": "montage-builder",
+    "displayName": "Montage Builder",
+    "description": "A VS Code UI extension for editing Montage components",
     "version": "0.0.1",
     "publisher": "Kaazing",
     "engines": {
@@ -11,21 +11,21 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.reel"
+        "onCommand:builder.open"
     ],
     "main": "./out/extension",
     "contributes": {
         "commands": [
             {
-                "command": "extension.reel",
-                "title": "Reel"
+                "command": "builder.open",
+                "title": "Open Montage Builder"
             }
         ],
         "views": {
             "explorer": [
                 {
-                    "id": "configurator",
-                    "name": "Component Configurator",
+                    "id": "builder",
+                    "name": "Montage Builder",
                     "when": "reelFileActive" 
                 }
             ]
