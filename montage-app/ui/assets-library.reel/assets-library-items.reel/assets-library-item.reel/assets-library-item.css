@@ -1,0 +1,55 @@
+.AssetsLibraryItem .AssetsLibraryItem-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    width: 100%;
+    padding: 4px 8px;
+    min-width: 0;
+    margin: 0;
+    line-height: 1;
+    text-align: left;
+    border-radius: 0;
+    border: none;
+    color: hsl(0, 0%, 84%);
+    border-bottom: 1px solid hsla(0, 0%, 0%, 0.1);
+    outline: none;
+    cursor: move;
+    -webkit-font-smoothing: antialiased;
+}
+
+.AssetsLibraryItem .AssetsLibraryItem-button:hover {
+    background-color: hsl(0,0%,30%);
+}
+
+.AssetsLibraryItem .AssetsLibraryItem-button:active {
+    background-color: hsl(0,0%,22%);
+}
+
+.AssetsLibraryItem-button[draggable=false] {
+    background-color: hsl(43, 100%, 85%) !important;
+    opacity: .5 !important;
+}
+
+.AssetsLibraryItem-button-icon {
+    width: 14px;
+    height: 14px;
+    margin: auto 0;
+}
+
+.AssetsLibraryItem-button-label {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    font-size: 11px;
+    line-height: 14px;
+    margin-left: 6px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}

@@ -6,7 +6,8 @@
     },
     "dependencies": {
         "montage": "latest",
-        "palette": "github.com:montagestudio/palette#master"
+        "palette": "git@github.com:montagestudio/palette#master",
+        "matte": "latest"
     },
     "devDependencies": {
         "montage-testing": "latest"

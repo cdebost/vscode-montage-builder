@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="tree.css">
+    <script type="text/montage-serialization">
+    {
+        "owner": {
+            "properties": {
+                "element": {"#": "tree"}
+            },
+            "bindings": {
+                "root": {"<-": "@owner.treeController.object"}
+            }
+        },
+
+        "list": {
+            "prototype": "montage/ui/repetition.reel",
+            "properties": {
+                "element": {"#": "list"},
+                "contentController": {"@": "listController"}
+            }
+        },
+
+        "listController": {
+            "prototype": "montage/core/range-controller",
+            "bindings": {
+                "content": {"<-": "@owner.treeController.iterations"}
+            }
+        },
+
+        "row": {
+            "prototype": "./indent",
+            "properties": {
+                "element": {"#": "row"}
+            },
+            "bindings": {
+                "iteration": {"<-": "@list:iteration.object"},
+                "ignoreRoot": {"<-": "@owner.ignoreRoot"}
+            }
+        },
+
+        "rootCondition": {
+            "prototype": "montage/ui/condition.reel",
+            "properties": {
+                "element": {"#": "rootCondition"},
+                "removalStrategy": "hide"
+            },
+            "bindings": {
+                "condition": {"<-": "!(@owner.ignoreRoot && !@row.iteration.parent)"}
+            }
+        }   
+    }
+</script>
+<body>
+
+<div data-montage-id="tree">
+    <div data-montage-id="list" class="Tree-list">
+        <div data-montage-id="rootCondition">
+            <div data-montage-id="row" class="Tree-list-row">
+                <div data-param="treeNode"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

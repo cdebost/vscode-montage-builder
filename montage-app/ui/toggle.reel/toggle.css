@@ -1,0 +1,52 @@
+.Toggle.matte-InputCheckbox {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    position: relative;
+    box-sizing: border-box;
+    margin: 0;
+    width: 14px;
+    height: 14px;
+    font-size: 12px;
+    color: hsl(0, 0%, 30%);
+    border: none;
+    border-radius: 0;
+    background: url(/assets/icons/toggle.svg) no-repeat left center;
+    background-size: 14px;
+    outline: none;
+    cursor: pointer;
+    vertical-align: middle;
+    -webkit-transform-origin: 6px center;
+    -moz-transform-origin: 6px center;
+    -ms-transform-origin: 6px center;
+    transform-origin: 6px center;
+    -webkit-transition: -webkit-transform .1s ease-in-out;
+    -moz-transition: -moz-transform .1s ease-in-out;
+    -ms-transition: -ms-transform .1s ease-in-out;
+    transition: transform .1s ease-in-out;
+}
+
+.Toggle.matte-InputCheckbox:focus {
+    outline-offset: 0px;
+}
+
+.Toggle.matte-InputCheckbox:checked {
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
+
+/* 
+    Workaround just for Firefox
+    Use a non-standard built-in "tree twisty" appearance
+    https://bugzilla.mozilla.org/show_bug.cgi?id=605985
+*/
+.Toggle.matte-InputCheckbox {
+    -moz-appearance: treetwisty;
+}
+.Toggle.matte-InputCheckbox:checked {
+    -moz-appearance: treetwistyopen;
+    -moz-transform: none;
+}

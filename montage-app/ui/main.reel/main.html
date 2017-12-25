@@ -12,13 +12,20 @@
                 "properties": {
                     "element": {"#": "main"}
                 }
+            },
+
+            "componentEditor": {
+                "prototype": "ui/component-editor.reel",
+                "properties": {
+                    "element": {"#": "componentEditor"}
+                }
             }
         }
     </script>
 </head>
 <body>
     <div data-montage-id="main" data-montage-skin="light" class="Main">
-        Hello World from a Montage App.
+        <div data-montage-id="componentEditor"></div>
     </div>
 </body>
 </html>
