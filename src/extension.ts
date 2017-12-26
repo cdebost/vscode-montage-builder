@@ -31,6 +31,7 @@ function activateServer(context: vscode.ExtensionContext) {
     server.on('message', message => {
         console.log('message from child:', message);
     });
+    server.send('hello');
 }
 
 // this method is called when your extension is deactivated
