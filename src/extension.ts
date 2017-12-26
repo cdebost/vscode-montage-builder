@@ -1,10 +1,14 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import * as Url from 'url';
+import url = require('url');
+import path = require('path');
+import { fork } from 'child_process';
 import { ReelDocumentContentProvider } from './reel-document-content-provider';
 
 export function activate(context: vscode.ExtensionContext) {
+    activateServer(context);
+
     const provider = new ReelDocumentContentProvider(context);
 
     const providerRegistrations = vscode.workspace.registerTextDocumentContentProvider(
@@ -13,6 +17,20 @@ export function activate(context: vscode.ExtensionContext) {
     const commandRegistration = vscode.commands.registerCommand('builder.open', openBuilder);
 
     context.subscriptions.push(provider, providerRegistrations, commandRegistration);
+}
+
+function activateServer(context: vscode.ExtensionContext) {
+    const serverModule = context.asAbsolutePath(path.join('server', 'server.js'));
+    const args = ['--nolazy', '--inspect=6009'];
+    // Enable IPC
+    const options = {
+        stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+    };
+
+    const server = fork(serverModule, args, options);
+    server.on('message', message => {
+        console.log('message from child:', message);
+    });
 }
 
 // this method is called when your extension is deactivated

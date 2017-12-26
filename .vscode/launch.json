@@ -11,7 +11,7 @@
             "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [ "${workspaceRoot}/out/**/*.js" ],
-            "preLaunchTask": "npm: watch"
+            "preLaunchTask": "watch:client"
         },
         {
             "name": "Extension Tests",
@@ -22,7 +22,18 @@
             "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [ "${workspaceRoot}/out/test/**/*.js" ],
-            "preLaunchTask": "npm: watch"
-        }
+            "preLaunchTask": "watch:client"
+        },
+        {
+            "name": "Attach to Server",
+            "type": "node",
+            "request": "attach",
+            "port": 6009,
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/server/**/*.js"
+            ],
+            "preLaunchTask": "watch:server"
+        },
     ]
 }

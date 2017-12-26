@@ -1,0 +1,10 @@
+{
+    "name": "montage-language-server",
+    "version": "0.0.1",
+    "description": "A language server for Montage Reels.",
+    "scripts": {
+        "installServer": "installServerIntoExtension .. ./package.json ./tsconfig.json",
+        "compile": "npm run installServer && tsc -p",
+        "watch": "npm run installServer && tsc -w -p"
+    }
+}
