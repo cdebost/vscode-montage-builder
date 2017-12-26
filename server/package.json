@@ -1,9 +1,0 @@
-{
-    "name": "montage-language-server",
-    "version": "0.0.1",
-    "description": "A language server for Montage Reels.",
-    "scripts": {
-        "compile": "tsc -p",
-        "watch": "tsc -w -p"
-    }
-}

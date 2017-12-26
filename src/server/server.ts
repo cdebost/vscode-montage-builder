@@ -1,6 +1,6 @@
 'use strict';
 
-import { IpcMessage, IpcListener } from '../../src/shared/ipc';
+import { IpcMessage, IpcListener } from '../shared/ipc';
 
 const ipcListener = new IpcListener(process);
 
