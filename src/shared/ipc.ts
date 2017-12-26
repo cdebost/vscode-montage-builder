@@ -3,6 +3,8 @@
 import process = require('process');
 
 export class IpcMessage {
+    static ack: IpcMessage = new IpcMessage('ack');
+
     type: string;
     detail: object;
 
@@ -33,6 +35,10 @@ export class IpcListener {
 
     send(message: IpcMessage) {
         process.send(message);
+    }
+
+    ack() {
+        this.send(new IpcMessage('ack'));
     }
 
     on(type: string, handler: Function) {

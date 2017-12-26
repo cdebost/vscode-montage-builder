@@ -6,7 +6,16 @@ const ipcListener = new IpcListener(process);
 
 let montageAppRoot;
 
+class InitConfig {
+    montageAppRoot: string;
+}
+
 ipcListener.on('init', message => {
-    montageAppRoot = message.montageAppRoot;
-    ipcListener.send(new IpcMessage('ack', { root: montageAppRoot }));
+    const config = message as InitConfig;
+    initServer(config);
+    ipcListener.ack();
 });
+
+function initServer(config: InitConfig) {
+    montageAppRoot = config.montageAppRoot;
+}

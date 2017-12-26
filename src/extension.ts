@@ -31,7 +31,7 @@ function activateServer(context: vscode.ExtensionContext) {
     const server = fork(serverModule, args, options);
     const ipcListener = new IpcListener(server);
     ipcListener.on('ack', message => {
-        console.log('message from child:', message);
+        console.log('ack from child');
     })
     server.send(new IpcMessage('init', {
         montageAppRoot: context.asAbsolutePath('montage-app')
