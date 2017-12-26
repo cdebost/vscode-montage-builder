@@ -20,7 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function activateServer(context: vscode.ExtensionContext) {
-    const serverModule = context.asAbsolutePath(path.join('server', 'server.js'));
+    const serverModule = context.asAbsolutePath(path.join('out', 'server', 'server.js'));
     const args = ['--nolazy', '--inspect=6009'];
     // Enable IPC
     const options = {

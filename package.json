@@ -42,11 +42,11 @@
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "postinstall": "cd server && npm install && cd .. && node ./node_modules/vscode/bin/install",
-    "compile": "tsc -p tsconfig.json && cd server && npm run installServer && cd .. && tsc -p server/tsconfig.json",
+    "compile": "tsc -p tsconfig.json && tsc -p server/tsconfig.json",
     "compile:client": "tsc -p ./",
     "watch:client": "tsc -w -p ./",
-    "compile:server": "cd server && npm run installServer && cd .. && tsc -p server/tsconfig.json",
-    "watch:server": "cd server && npm run installServer && cd .. && tsc -w -p server/tsconfig.json",
+    "compile:server": "tsc -p server/tsconfig.json",
+    "watch:server": "tsc -w -p server/tsconfig.json",
     "test": "npm run compile && node ./node_modules/vscode/bin/test"
   },
   "devDependencies": {
