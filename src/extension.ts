@@ -5,6 +5,7 @@ import url = require('url');
 import path = require('path');
 import { fork } from 'child_process';
 import { ReelDocumentContentProvider } from './reel-document-content-provider';
+import { IpcMessage, IpcListener } from './shared/ipc';
 
 export function activate(context: vscode.ExtensionContext) {
     activateServer(context);
@@ -28,10 +29,13 @@ function activateServer(context: vscode.ExtensionContext) {
     };
 
     const server = fork(serverModule, args, options);
-    server.on('message', message => {
+    const ipcListener = new IpcListener(server);
+    ipcListener.on('ack', message => {
         console.log('message from child:', message);
-    });
-    server.send('hello');
+    })
+    server.send(new IpcMessage('init', {
+        montageAppRoot: context.asAbsolutePath('montage-app')
+    }));
 }
 
 // this method is called when your extension is deactivated
