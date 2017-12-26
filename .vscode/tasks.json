@@ -57,12 +57,13 @@
             "type": "npm",
             "script": "watch:client",
             "group": "build",
+            "isBackground": true,
             "presentation": {
                 "reveal": "never",
                 "panel": "dedicated"
             },
             "problemMatcher": [
-                "$tsc"
+                "$tsc-watch"
             ]
         },
         {
@@ -70,12 +71,13 @@
             "type": "npm",
             "script": "watch:server",
             "group": "build",
+            "isBackground": true,
             "presentation": {
                 "reveal": "never",
                 "panel": "dedicated"
             },
             "problemMatcher": [
-                "$tsc"
+                "$tsc-watch"
             ]
         }
     ]
