@@ -51,5 +51,8 @@
     "vscode": "^1.1.6",
     "@types/node": "^7.0.43",
     "@types/mocha": "^2.2.42"
+  },
+  "dependencies": {
+    "collections": "^5.1.1"
   }
 }
