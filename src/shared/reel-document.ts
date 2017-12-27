@@ -6,6 +6,12 @@ import { ReelSerializer } from '../../montage-app/core/serialization/reel-serial
 import { SORTERS } from '../../montage-app/node_modules/palette/core/sorters.js';
 import { Url } from '../../montage-app/core/url.js';
 import { MontageReviver } from '../../montage-app/node_modules/montage/core/serialization/deserializer/montage-reviver.js';
+import { JSDOM } from 'jsdom';
+import { Template } from '../../montage-app/node_modules/montage/core/template';
+import { NodeProxy } from './node-proxy';
+import { ReelProxy } from './reel-proxy';
+import { TemplateFormatter } from './template-formatter';
+import { MontageSerializer } from '../../montage-app/node_modules/montage/core/serialization/serializer/montage-serializer.js';
 
 export class ReelDocument {
     private _url: string;
@@ -13,10 +19,24 @@ export class ReelDocument {
     private _packageRequire;
     private _moduleId: string;
     private _exportName: string;
-    private _editingProxyMap = {};
+    private _template: Template;
+    private _javascript: string;
+    public templateNodes: NodeProxy[];
+    private _templateBodyNode: NodeProxy;
+    private __ownerBlueprint: Promise<[any, any, any]>;
+    private _propertyBlueprintConstructor: any;
+    private _eventBlueprintConstructor: any;
+
+    private _editingProxyMap: {owner?: {}} = {};
     private _selectedObjects = [];
     private _highlightedElements = [];
     private _errors = [];
+    private _registeredFiles = {};
+    private _hasModifiedData = {undoCount: 0, redoCount: 0};
+    private _isJavascriptModified = false;
+    public templateObjectsTree = {};
+    public templateObjectsTreeToggleStates: WeakMap<object, any>;
+    private _ignoreDataChange = false;
 
     constructor(fileUrl: string, dataSource, packageRequire) {
         this._url = fileUrl;
@@ -38,8 +58,8 @@ export class ReelDocument {
 
         return Promise.all([
             this._createTemplateWithUrl(packageUrl + templateModuleId),
-            this._dataSource.read(this._getJsFileUrl())
-        ]).spread((template, javascript) => {
+            this._dataSource.read(this._jsFileUrl)
+        ]).then(([template, javascript]) => {
             this._dataSource.addEventListener("dataChange", this, false);
             this._template = template;
             this._javascript = javascript;
@@ -74,17 +94,86 @@ export class ReelDocument {
     private _createTemplateWithUrl(url) {
         var self = this;
 
-        return this._dataSource.read(url)
-        .then(function (templateContent) {
+        return this._dataSource.read(url).then((templateContent) => {
             // Create the document for the template ourselves to avoid any massaging
             // we might do for templates intended for use; namely, rebasing resources
-            var htmlDocument = document.implementation.createHTMLDocument("");
-            htmlDocument.documentElement.innerHTML = templateContent;
+            const htmlDocument = new JSDOM(templateContent);
             return new Template().initWithDocument(htmlDocument, self._packageRequire);
         });
     }
 
-    deserializationContext(serialization, objects): ReelContext {
+    private _openTemplate(template) {
+        let error,
+            editingProxyMap,
+            context;
+
+        if (this.templateNodes) {
+            this.templateNodes.forEach(nodeProxy => nodeProxy.destroy());
+        }
+
+        editingProxyMap = this._editingProxyMap;
+        for (var key in editingProxyMap) {
+            if (editingProxyMap.hasOwnProperty(key) && editingProxyMap[key]) {
+                editingProxyMap[key].destroy();
+            }
+        }
+
+        // this.undoManager.clearUndo();
+        // this.undoManager.clearRedo();
+        this._resetModifiedDataState();
+
+        this._template = template;
+        this._templateBodyNode = new NodeProxy(template.document.body, this);
+        this.templateNodes = this._children(this._templateBodyNode);
+
+        this._errors = [];
+        try {
+            var serialization = JSON.parse(template.getInlineObjectsString(template.document));
+            if (serialization) {
+                context = this.deserializationContext(serialization);
+                context.ownerExportId = this._moduleId;
+                this._replaceProxies(context.getObjects());
+            }
+        } catch (e) {
+
+            error = {
+                file: this._url,
+                error: {
+                    id: "serializationError",
+                    reason: e.message,
+                    stack: e.stack
+                }
+            };
+            this._errors.push(error);
+
+        }
+        this.buildTemplateObjectTree();
+    }
+
+    private _children(node, depth?: number): NodeProxy[] {
+        if (!depth) {
+            depth = 0;
+        }
+
+        if (!node) {
+            return;
+        } else {
+            node.depth = depth;
+            if (node.children) {
+                let array = [node];
+
+                node.children.forEach((child) => {
+                    array = array.concat(this._children(child, depth + 1));
+                });
+
+                return array;
+            } else {
+                return [node];
+            }
+        }
+    }
+
+    deserializationContext(serialization, objects?): ReelContext {
         const context = new ReelContext().init(serialization, new ReelReviver(), objects);
         context.editingDocument = this;
         return context;
@@ -182,5 +271,286 @@ export class ReelDocument {
             throw new Error("Could not find proxy to remove with label '" + proxy.label + "'");
         }
         delete proxyMap[proxy.label];
+    }
+    
+    buildTemplateObjectTree() {
+        this.templateObjectsTree = this.createTemplateObjectTree();
+    }
+
+    /*
+        Build the templateObjectsTree from the templatesNodes
+        Steps:
+            - add the root element
+            - create a list of components to be arranged in the tree, "proxyFIFO"
+            - pick the head element, "nodeProxy" of the list and try to add it to the tree.
+              While adding to the tree we keep a map of elements to tree node updated.
+            - if the element has no DOM representation it is added to the root of the tree as first child
+            - otherwise we seek the element's parentComponent to then add it
+            - if the parentComponent has not yet been added we postpone adding this node for later by pushing back into the FIFO
+    */
+    createTemplateObjectTree() {
+        const successivePushes = {number: 0};
+        // map of ReelProxy to tree node, for quick tree node access
+        const insertionMap = new WeakMap();
+        // add the root
+        const root = this._buildTreeAddRoot(insertionMap);
+        // filling the FIFO
+        const proxyFIFO = this._buildTreeFillFIFO();
+        let reelProxy;
+
+        while (reelProxy = proxyFIFO.shift()) {
+            if (this._reelProxyHasElementProperty(reelProxy)) {
+                this._addNodeWithDOM(reelProxy, root, insertionMap, proxyFIFO, successivePushes);
+            } else {
+                this._addNodeWithoutDOM(reelProxy, root);
+            }
+            // to be safe, guard to prevent an infinite loop
+            if (successivePushes.number > proxyFIFO.length) {
+                throw new Error("Can not build templateObjectsTree: looping on the same components");
+            }
+        }
+        this.templateObjectsTreeToggleStates = new WeakMap<object, any>();
+        return root;
+    }
+
+    // Subroutines for buildTemplateObjectTree
+    private _buildTreeAddRoot(insertionMap: WeakMap<object, any>) {
+        const ownerObject = this._editingProxyMap.owner;
+        const root = {
+            templateObject: ownerObject,
+            expanded: true,
+            children: []
+        };
+        insertionMap.set(ownerObject, root);
+        return root;
+    }
+
+    private _buildTreeFillFIFO() {
+        const proxyMap = this._editingProxyMap;
+        const ownerObject = proxyMap.owner;
+
+        return Object.keys(proxyMap).reduce((fifo, componentName) => {
+            const component = proxyMap[componentName];
+            // we remove the owner as it is added as the root
+            if (component !== ownerObject) {
+                fifo.push(component);
+            }
+            return fifo;
+        }, []);
+    }
+
+    private _reelProxyHasElementProperty(reelProxy: ReelProxy) {
+        return reelProxy.properties && reelProxy.properties.get('element');
+    }
+
+    private _addNodeWithDOM(reelProxy: ReelProxy, root, insertionMap: WeakMap<object, any>,
+                            proxyFIFO, successivePushes) {
+        // find the parent component
+        const parentReelProxy = this._buildTreeFindParentComponent(reelProxy);
+        if (!parentReelProxy) {
+            this._addOrphanToRoot(root, reelProxy);
+            return;
+        }
+
+        if (insertionMap.has(parentReelProxy)) {
+            this._addNodeToTree(reelProxy, insertionMap, parentReelProxy);
+
+            // reset the infinite loop guard
+            successivePushes.number = 0;
+        } else {
+            // parentReelProxy not found -> has not been added to the tree yet
+            proxyFIFO.push(reelProxy);
+            successivePushes.number++;
+        }
+    }
+
+    private _buildTreeFindParentComponent(reelProxy: ReelProxy) {
+        const nodeProxy = reelProxy.properties.get('element');
+        let parentNodeProxy = nodeProxy;
+        let parentReelProxy;
+        while (parentNodeProxy = parentNodeProxy.parentNode) {
+            if (parentNodeProxy.component) {
+                parentReelProxy = parentNodeProxy.component;
+                break;
+            }
+        }
+        return parentReelProxy;
+    }
+
+    private _addOrphanToRoot(root, reelProxy: ReelProxy) {
+        // orphan child
+        const orphanNode = {
+            templateObject: reelProxy,
+            children: []
+        };
+        // let's add it to the root with the template-less nodes
+        root.children.unshift(orphanNode);
+    }
+
+    private _addNodeToTree(reelProxy: ReelProxy, insertionMap: WeakMap<object, any>,
+                   parentReelProxy: ReelProxy) {
+        // add the node to the tree
+        const node = {
+            templateObject: reelProxy,
+            expanded: this._expanded(reelProxy),
+            children: []
+        };
+        const parentNode = insertionMap.get(parentReelProxy);
+        const nodePosition = this._buildTreeFindChildPosition(reelProxy, parentReelProxy);
+        if (nodePosition >= parentNode.children.length) {
+            parentNode.children.push(node);
+        } else {
+            parentNode.children.splice(nodePosition, 0, node);
+        }
+        insertionMap.set(reelProxy, node);
+    }
+
+    private _expanded(reelProxy: ReelProxy) {
+        const toggleStates = this.templateObjectsTreeToggleStates;
+        return (toggleStates.get(reelProxy) !== undefined) ? toggleStates.get(reelProxy) : true;
+    }
+
+    private _buildTreeFindChildPosition(reelProxy: ReelProxy, parentReelProxy: ReelProxy) {
+        let node = reelProxy.properties.get("element");
+        const parentNode = parentReelProxy.properties.get("element");
+        let nodePosition;
+        // the parentReelProxy does not have to be the direct parentNode
+        while (node.parentNode && (node.parentNode !== parentNode)) {
+            node = node.parentNode;
+        }
+        nodePosition = parentNode.children.indexOf(node);
+        if (nodePosition === -1) {
+            throw new Error("Can not find child position");
+        }
+        return nodePosition;
+    }
+
+    private _addNodeWithoutDOM(reelProxy: ReelProxy, root) {
+        // has not DOM representation, added as root children
+        const nodeTemplateLess = {
+            templateObject: reelProxy,
+            children: []
+        };
+        // let's add them in top to keep the tree "cleaner"
+        root.children.unshift(nodeTemplateLess);
+    }
+
+    private get _ownerBlueprint() {
+        if (!this.__ownerBlueprint) {
+            const packageRequire = this._packageRequire;
+
+            // Before we can actually edit the ownerBlueprint, we need other types of blueprint
+            // from the same package
+            this.__ownerBlueprint = Promise.all([
+                packageRequire.async("montage/core/meta/property-descriptor").get("PropertyDescriptor"),
+                packageRequire.async("montage/core/meta/event-descriptor").get("EventDescriptor"),
+                packageRequire.async(this._moduleId).get(this._exportName).get("blueprint")
+            ]).then(([propertyBlueprint, eventBlueprint, ownerBlueprint]) => {
+                this._propertyBlueprintConstructor = propertyBlueprint;
+                this._eventBlueprintConstructor = eventBlueprint;
+                return ownerBlueprint;
+            });
+        }
+
+        return this.__ownerBlueprint;
+    }
+
+    // Files
+
+    private get _jsFileUrl() {
+        const filenameMatch = this._url.match(/.+\/(.+)\.reel/);
+        return this._url + filenameMatch[1] + ".js";
+    }
+
+    /**
+     * Registers a new file to save when the document is saved.
+     *
+     * @param  {string}   extension The extension of the file.
+     * @param  {function(location, dataSource): Promise} saveCallback
+     * A function to call to save the file. Passed the location of the file
+     * created by taking the reel location, extracting the basename and
+     * suffixing the extensions. Must return a promise for the saving of the
+     * file.
+     */
+    registerFile(extension: string,
+                 saveCallback: (location: string, dataSource: any) => Promise<any>,
+                 thisArg) {
+        this._registeredFiles[extension] = {callback: saveCallback, thisArg: thisArg};
+    }
+
+    private _generateHtml() {
+        this._buildSerializationObjects();
+        return new TemplateFormatter(this._template).getHtml();
+    }
+
+    private _saveHtml(location, dataSource) {
+        var self = this;
+        var html;
+
+        if (!this.hasModifiedData(location)) {
+            return;
+        }
+
+        html = this._generateHtml();
+
+        this._ignoreDataChange = true;
+        return dataSource.write(location, html)
+            .then(() => this._ignoreDataChange = false);
+    }
+
+    private _saveJs(location, dataSource) {
+        var self = this;
+
+        if (!this.hasModifiedData(location)) {
+            return;
+        }
+
+        this._ignoreDataChange = true;
+        return dataSource.write(location, this._javascript)
+        .then(() => this._ignoreDataChange = false);
+    }
+
+    private _saveMeta(location, dataSource) {
+        var serializer = new MontageSerializer().initWithRequire(this._packageRequire);
+        return this._ownerBlueprint
+            .then(function (blueprint) {
+                var serializedDescription = serializer.serializeObject(blueprint);
+                return dataSource.write(location, serializedDescription);
+            });
+    }
+
+    private _getHtmlFileUrl() {
+        var filenameMatch = this._url.match(/.+\/(.+)\.reel/);
+        return this._url + filenameMatch[1] + ".html";
+    }
+
+    private _getJsFileUrl() {
+        var filenameMatch = this._url.match(/.+\/(.+)\.reel/);
+        return this._url + filenameMatch[1] + ".js";
+    }
+
+    hasModifiedData(url) {
+        // const undoManager = this._undoManager;
+        const undoManager = null;
+        const hasModifiedData = this._hasModifiedData;
+        if (url === this._getHtmlFileUrl()) {
+            return undoManager && hasModifiedData &&
+                (hasModifiedData.undoCount !== undoManager.undoCount ||
+                hasModifiedData.redoCount !== undoManager.redoCount);
+        } else if (url === this._getJsFileUrl()) {
+            return this._isJavascriptModified && undoManager &&
+                hasModifiedData &&
+                (hasModifiedData.undoCount !== undoManager.undoCount ||
+                hasModifiedData.redoCount !== undoManager.redoCount);
+        }
+    }
+
+    private _resetModifiedDataState() {
+        if (!this._hasModifiedData) {
+            this._hasModifiedData = {undoCount: 0, redoCount: 0};
+        }
+        // this._hasModifiedData.undoCount = this._undoManager.undoCount;
+        // this._hasModifiedData.redoCount = this._undoManager.redoCount;
+        this._isJavascriptModified = false;
     }
 }
