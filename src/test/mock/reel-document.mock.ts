@@ -55,7 +55,7 @@ export class ReelDocMock {
     }
 }
 
-export function reelDocumentMock(options) {
+export function reelDocumentMock(options?: {}) {
     const doc = new ReelDocMock();
 
     if (options) {

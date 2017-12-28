@@ -21,8 +21,8 @@ export class ReelProxy extends EditingProxy {
         }
     }
 
-    constructor(label: string, serialization, exportId: string,
-                editingDocument, isUserObject: boolean) {
+    constructor(label: string, serialization, exportId?: string,
+                editingDocument?, isUserObject: boolean = false) {
         super(label, serialization, exportId, editingDocument);
         if (!isUserObject && !exportId && !serialization.prototype && !serialization.object) {
             throw new Error("No exportId provided or found for template object with label '" + label + "'");
