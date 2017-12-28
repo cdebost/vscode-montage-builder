@@ -8,7 +8,7 @@ export class EditingProxy {
     protected _moduleId: string;
     protected _exportName: string;
     protected _editingDocument;
-    private _originalSerializationMap;
+    private _originalSerializationMap: Map;
     public properties: Map<string, any>;
     public bindings: any[];
 
@@ -105,6 +105,10 @@ export class EditingProxy {
             this._exportName = EditingProxy.parseObjectLocationId(this._exportId).objectName;
         }
         return this._exportName;
+    }
+
+    get originalSerializationMap(): Map {
+        return this._originalSerializationMap;
     }
 
     constructor(label: string, serialization, exportId: string, editingDocument) {
