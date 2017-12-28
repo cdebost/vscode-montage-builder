@@ -5,10 +5,107 @@ import { Map } from 'collections/map';
 export class EditingProxy {
     public label: string;
     protected _exportId: string;
+    protected _moduleId: string;
+    protected _exportName: string;
     protected _editingDocument;
     private _originalSerializationMap;
     public properties: Map<string, any>;
     public bindings: any[];
+
+    static _locationDescCache = {};
+    static _findObjectNameRegExp = /([^\/]+?)(\.reel)?$/;
+    static _toCamelCaseRegExp = /(?:^|-)([^-])/g;
+
+    static _replaceToCamelCase(_, g1: string) {
+        return g1.toUpperCase();
+    }
+
+    static parseObjectLocationId(locationId: string) {
+        var locationDescCache = this._locationDescCache,
+            locationDesc,
+            bracketIndex,
+            moduleId,
+            objectName;
+
+        if (locationId in locationDescCache) {
+            locationDesc = locationDescCache[locationId];
+        } else {
+            bracketIndex = locationId.indexOf("[");
+
+            if (bracketIndex > 0) {
+                moduleId = locationId.substr(0, bracketIndex);
+                objectName = locationId.slice(bracketIndex + 1, -1);
+            } else {
+                moduleId = locationId;
+                this._findObjectNameRegExp.test(locationId);
+                objectName = RegExp.$1.replace(
+                    this._toCamelCaseRegExp,
+                    this._replaceToCamelCase
+                );
+            }
+
+            locationDesc = {
+                moduleId: moduleId,
+                objectName: objectName
+            };
+            locationDescCache[locationId] = locationDesc;
+        }
+
+        return locationDesc;
+    }
+
+    get editingDocument() {
+        return this._editingDocument;
+    }
+
+    get nextTarget() {
+        return this.editingDocument;
+    }
+
+    get proxyType(): string {
+        return 'ProxyObject';
+    }
+
+    /**
+     * The exportId of the object this proxy represents
+     * @note An exportId is comprised of a moduleId and either an explicit or implicit exportName
+     * @example "foo/bar/baz[Baz]"
+     */
+    get exportId(): string {
+        return this._exportId;
+    }
+
+    /**
+     * The moduleId portion of the exportId string
+     * @example "foo/bar/baz"
+     */
+    get moduleId(): string {
+        if (!this._moduleId && this._exportId) {
+            const fileUrl = this.editingDocument.url;
+            const packageUrl = this.editingDocument.packageRequire.location;
+            let baseModuleId = "";
+            if (fileUrl.indexOf(packageUrl) > -1) {
+                baseModuleId = fileUrl.substring(packageUrl.length);
+            }
+
+            let moduleId = EditingProxy.parseObjectLocationId(this._exportId).moduleId;
+            if (moduleId[0] === "." && (moduleId[1] === "." || moduleId[1] === "/")) {
+                moduleId = this.editingDocument.packageRequire.resolve(baseModuleId + "/" + moduleId, baseModuleId);
+            }
+            this._moduleId = moduleId;
+        }
+        return this._moduleId;
+    }
+
+    /**
+     * The exportName portion of the exportId.
+     */
+    get exportName(): string {
+        if (!this._exportName && this._exportId) {
+            this._exportName = EditingProxy.parseObjectLocationId(this._exportId).objectName;
+        }
+        return this._exportName;
+    }
 
     constructor(label: string, serialization, exportId: string, editingDocument) {
         this.label = label;
