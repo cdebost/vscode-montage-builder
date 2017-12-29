@@ -1,5 +1,7 @@
 'use strict';
 
+import { Node } from 'jsdom';
+
 const MONTAGE_ID_ATTRIBUTE = "data-montage-id";
 const MONTAGE_ARG_ATTRIBUTE = "data-arg";
 const MONTAGE_PARAM_ATTRIBUTE = "data-param";
@@ -8,10 +10,10 @@ export class NodeProxy {
     public component;
     public isInTemplate = false;
 
-    private _templateNode;
+    private _templateNode: Node;
     private _editingDocument;
-    private parentNode;
-    private children;
+    private parentNode: Node;
+    private children: NodeProxy[];
     private _attributeToPropertyMap = {};
 
     constructor(node, editingDocument) {
@@ -38,6 +40,10 @@ export class NodeProxy {
     destroy() {
         this._editingDocument = null;
         this.component = null;
+    }
+
+    get templateNode(): Node {
+        return this._templateNode;
     }
 
     get nextSibling() {
@@ -110,7 +116,7 @@ export class NodeProxy {
         this.setAttribute(MONTAGE_PARAM_ATTRIBUTE, value);
     }
 
-    get className() {
+    get className(): string {
         return this._templateNode.className;
     }
 
