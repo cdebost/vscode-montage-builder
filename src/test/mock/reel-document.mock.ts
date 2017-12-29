@@ -4,7 +4,7 @@ import { JSDOM } from 'jsdom';
 
 //TODO this could be brought inline with the rest of the "mocking system"
 export function mockReelDocument(fileUrl, serialization, bodyMarkup) {
-    const mockDocument = new JSDOM();
+    const mockDocument = new JSDOM().window.document;
 
     const serializationNode = mockDocument.createElement("script");
     serializationNode.setAttribute("type", "text/montage-serialization");
