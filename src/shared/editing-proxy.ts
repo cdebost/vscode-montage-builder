@@ -1,6 +1,7 @@
 'use strict';
 
 import { Map } from 'collections/map';
+import { parseObjectLocationId } from '../util/montage-utils';
 
 export class EditingProxy {
     public label: string;
@@ -11,48 +12,6 @@ export class EditingProxy {
     private _originalSerializationMap: Map;
     public properties: Map<string, any>;
     public bindings: any[];
-
-    static _locationDescCache = {};
-    static _findObjectNameRegExp = /([^\/]+?)(\.reel)?$/;
-    static _toCamelCaseRegExp = /(?:^|-)([^-])/g;
-
-    static _replaceToCamelCase(_, g1: string) {
-        return g1.toUpperCase();
-    }
-
-    static parseObjectLocationId(locationId: string) {
-        var locationDescCache = this._locationDescCache,
-            locationDesc,
-            bracketIndex,
-            moduleId,
-            objectName;
-
-        if (locationId in locationDescCache) {
-            locationDesc = locationDescCache[locationId];
-        } else {
-            bracketIndex = locationId.indexOf("[");
-
-            if (bracketIndex > 0) {
-                moduleId = locationId.substr(0, bracketIndex);
-                objectName = locationId.slice(bracketIndex + 1, -1);
-            } else {
-                moduleId = locationId;
-                this._findObjectNameRegExp.test(locationId);
-                objectName = RegExp.$1.replace(
-                    this._toCamelCaseRegExp,
-                    this._replaceToCamelCase
-                );
-            }
-
-            locationDesc = {
-                moduleId: moduleId,
-                objectName: objectName
-            };
-            locationDescCache[locationId] = locationDesc;
-        }
-
-        return locationDesc;
-    }
 
     get editingDocument() {
         return this._editingDocument;
@@ -88,7 +47,7 @@ export class EditingProxy {
                 baseModuleId = fileUrl.substring(packageUrl.length);
             }
 
-            let moduleId = EditingProxy.parseObjectLocationId(this._exportId).moduleId;
+            let moduleId = parseObjectLocationId(this._exportId).moduleId;
             if (moduleId[0] === "." && (moduleId[1] === "." || moduleId[1] === "/")) {
                 moduleId = this.editingDocument.packageRequire.resolve(baseModuleId + "/" + moduleId, baseModuleId);
             }
@@ -102,7 +61,7 @@ export class EditingProxy {
      */
     get exportName(): string {
         if (!this._exportName && this._exportId) {
-            this._exportName = EditingProxy.parseObjectLocationId(this._exportId).objectName;
+            this._exportName = parseObjectLocationId(this._exportId).objectName;
         }
         return this._exportName;
     }
