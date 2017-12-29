@@ -1,16 +1,17 @@
 'use strict';
 
-import { ReelReviver } from '../../montage-app/core/serialization/reel-reviver.js';
-import { ReelContext } from '../../montage-app/core/serialization/reel-context.js';
-import { ReelSerializer } from '../../montage-app/core/serialization/reel-serializer.js';
-import { SORTERS } from '../../montage-app/node_modules/palette/core/sorters.js';
-import { Url } from '../../montage-app/core/url.js';
-import { MontageReviver } from '../../montage-app/node_modules/montage/core/serialization/deserializer/montage-reviver.js';
 import { JSDOM } from 'jsdom';
-import { Template } from '../../montage-app/node_modules/montage/core/template';
 import { NodeProxy } from './node-proxy';
 import { ReelProxy } from './reel-proxy';
 import { TemplateFormatter } from './template-formatter';
+import { parseObjectLocationId } from '../util/montage-utils';
+import { ReelReviver } from './serialization/reel-reviver';
+import { ReelContext } from './serialization/reel-context';
+import { ReelSerializer } from './serialization/reel-serializer';
+import Url = require('../util/url');
+
+import { SORTERS } from '../../montage-app/node_modules/palette/core/sorters.js';
+import { Template } from '../../montage-app/node_modules/montage/core/template';
 import { MontageSerializer } from '../../montage-app/node_modules/montage/core/serialization/serializer/montage-serializer.js';
 
 export class ReelDocument {
@@ -27,7 +28,7 @@ export class ReelDocument {
     private _propertyBlueprintConstructor: any;
     private _eventBlueprintConstructor: any;
 
-    private _editingProxyMap: {owner?: {}} = {};
+    private _editingProxyMap: any = {};
     private _selectedObjects = [];
     private _highlightedElements = [];
     private _errors = [];
@@ -43,12 +44,17 @@ export class ReelDocument {
         this._dataSource = dataSource;
         this._packageRequire = packageRequire;
 
+
         this._moduleId = Url.toModuleId(fileUrl, packageRequire.location);
-        this._exportName = MontageReviver.parseObjectLocationId(this._moduleId).objectName;
+        this._exportName = parseObjectLocationId(this._moduleId).objectName;
     }
 
     get title() {
         return decodeURI(this._url.match(/\/([^\/]+)\/*$/)[1]);
+    }
+
+    get editingProxyMap() {
+        return this._editingProxyMap;
     }
 
     load() {
@@ -92,13 +98,11 @@ export class ReelDocument {
     }
 
     private _createTemplateWithUrl(url) {
-        var self = this;
-
         return this._dataSource.read(url).then((templateContent) => {
             // Create the document for the template ourselves to avoid any massaging
             // we might do for templates intended for use; namely, rebasing resources
-            const htmlDocument = new JSDOM(templateContent);
-            return new Template().initWithDocument(htmlDocument, self._packageRequire);
+            const { document } = new JSDOM(templateContent).window;
+            return new Template().initWithDocument(document, this._packageRequire);
         });
     }
 
@@ -150,6 +154,10 @@ export class ReelDocument {
         this.buildTemplateObjectTree();
     }
 
+    nodeProxyForMontageId(montageId: string): NodeProxy {
+        return this.templateNodes.find(node => node.montageId === montageId);
+    }
+
     private _children(node, depth?: number): NodeProxy[] {
         if (!depth) {
             depth = 0;
@@ -173,7 +181,7 @@ export class ReelDocument {
         }
     }
 
-    deserializationContext(serialization, objects?): ReelContext {
+    deserializationContext(serialization, objects?) {
         const context = new ReelContext().init(serialization, new ReelReviver(), objects);
         context.editingDocument = this;
         return context;
